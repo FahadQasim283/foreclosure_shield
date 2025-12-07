@@ -128,4 +128,21 @@ class AppColors {
         return neutral500;
     }
   }
+
+  /// Returns color based on task priority
+  static Color getPriorityColor(String priority) {
+    switch (priority.toUpperCase()) {
+      case 'CRITICAL':
+      case 'HIGH':
+        return red;
+      case 'URGENT':
+      case 'MEDIUM':
+        return orange;
+      case 'NORMAL':
+      case 'LOW':
+        return amber;
+      default:
+        return neutral500;
+    }
+  }
 }

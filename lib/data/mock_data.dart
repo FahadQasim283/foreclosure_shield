@@ -4,9 +4,9 @@ class MockData {
   // Mock User
   static final User mockUser = User(
     id: '1',
-    email: 'john.smith@example.com',
-    name: 'John Smith',
-    phone: '+1 (555) 123-4567',
+    email: 'fahadqasim3310@gmail.com',
+    name: 'Fahad Qasim',
+    phone: '+923021826959',
     role: 'client',
     createdAt: DateTime.now().subtract(const Duration(days: 30)),
     isEmailVerified: true,
