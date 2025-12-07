@@ -2,6 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '/core/routes/route_names.dart';
+import '/presentation/screens/splash_screen.dart';
+import '/presentation/screens/auth/login_screen.dart';
+import '/presentation/screens/auth/signup_screen.dart';
+import '/presentation/screens/main/main_screen.dart';
+import '/presentation/screens/assessment/start_assessment_screen.dart';
+import '/presentation/screens/assessment/assessment_result_screen.dart';
+import '/presentation/screens/action_plan/action_plan_screen.dart';
+import '/presentation/screens/documents/generate_letter_screen.dart';
+import '/presentation/screens/notifications/notifications_screen.dart';
+import '/presentation/screens/settings/settings_screen.dart';
+import '/presentation/screens/subscription/subscription_plan_screen.dart';
+import '/presentation/screens/help_support/help_support_screen.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -11,6 +23,50 @@ class RouteGenerator {
     debugLogDiagnostics: kDebugMode,
     navigatorKey: rootNavigatorKey,
     routes: [
+      // Splash
+      GoRoute(path: RouteNames.splash, builder: (context, state) => const SplashScreen()),
+
+      // Authentication
+      GoRoute(path: RouteNames.login, builder: (context, state) => const LoginScreen()),
+      GoRoute(path: RouteNames.signup, builder: (context, state) => const SignupScreen()),
+
+      // Main App
+      GoRoute(path: RouteNames.main, builder: (context, state) => const MainScreen()),
+
+      // Risk Assessment
+      GoRoute(
+        path: RouteNames.startAssessment,
+        builder: (context, state) => const StartAssessmentScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.assessmentResult,
+        builder: (context, state) => const AssessmentResultScreen(),
+      ),
+
+      // Action Plan
+      GoRoute(path: RouteNames.actionPlan, builder: (context, state) => const ActionPlanScreen()),
+
+      // Documents
+      GoRoute(
+        path: RouteNames.generateLetter,
+        builder: (context, state) => const GenerateLetterScreen(),
+      ),
+
+      // Notifications
+      GoRoute(
+        path: RouteNames.notifications,
+        builder: (context, state) => const NotificationsScreen(),
+      ),
+
+      // Settings & Profile
+      GoRoute(path: RouteNames.settings, builder: (context, state) => const SettingsScreen()),
+      GoRoute(
+        path: RouteNames.subscriptionPlans,
+        builder: (context, state) => const SubscriptionPlanScreen(),
+      ),
+      GoRoute(path: RouteNames.helpSupport, builder: (context, state) => const HelpSupportScreen()),
+
+      // Add more routes here as screens are created
     ],
     errorBuilder: (context, state) =>
         ErrorScreen(errorMessage: state.error?.toString(), currentLocation: state.matchedLocation),

@@ -19,7 +19,7 @@ class NavigationService {
 
   static void goToGetStarted() {
     if (currentContext != null) {
-      GoRouter.of(currentContext!).go(RouteNames.getStarted);
+      GoRouter.of(currentContext!).go(RouteNames.login);
     }
   }
 
@@ -45,7 +45,7 @@ class NavigationService {
   // Main app navigation
   static void goToMainTab() {
     if (currentContext != null) {
-      GoRouter.of(currentContext!).go(RouteNames.mainTab);
+      GoRouter.of(currentContext!).go(RouteNames.main);
     }
   }
 
@@ -57,13 +57,13 @@ class NavigationService {
 
   static void goToServices() {
     if (currentContext != null) {
-      GoRouter.of(currentContext!).go(RouteNames.services);
+      GoRouter.of(currentContext!).go(RouteNames.documents);
     }
   }
 
   static void goToBookings() {
     if (currentContext != null) {
-      GoRouter.of(currentContext!).go(RouteNames.bookings);
+      GoRouter.of(currentContext!).go(RouteNames.actionPlan);
     }
   }
 

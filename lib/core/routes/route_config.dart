@@ -5,25 +5,31 @@ class RouteConfig {
   RouteConfig._();
 
   /// All authenticated routes that require user login
-  static const Set<String> _authenticatedRoutes = {
-    RouteNames.mainTab,
-    '${RouteNames.mainTab}/${RouteNames.home}',
+  static final Set<String> _authenticatedRoutes = {
+    RouteNames.main,
+    RouteNames.home,
+    RouteNames.documents,
+    RouteNames.profile,
+    RouteNames.startAssessment,
+    RouteNames.assessmentResult,
+    RouteNames.actionPlan,
+    RouteNames.generateLetter,
+    RouteNames.notifications,
+    RouteNames.settings,
   };
 
   /// All public routes that don't require authentication
-  static const Set<String> _publicRoutes = {
-    RouteNames.splash,
-    RouteNames.getStarted,
-    RouteNames.onboarding,
-  };
+  static final Set<String> _publicRoutes = {RouteNames.splash, RouteNames.onboarding};
 
   /// Routes that should not be accessible when user is already authenticated
   static const Set<String> _guestOnlyRoutes = {RouteNames.login, RouteNames.signup};
 
   /// Routes that can be accessed from deep links
-  static const Set<String> _deepLinkableRoutes = {
-    RouteNames.mainTab,
-    '${RouteNames.mainTab}/${RouteNames.home}',
+  static final Set<String> _deepLinkableRoutes = {
+    RouteNames.main,
+    RouteNames.home,
+    RouteNames.startAssessment,
+    RouteNames.notifications,
   };
 
   /// Check if a route requires authentication
@@ -53,7 +59,7 @@ class RouteConfig {
     }
 
     if (isAuthenticated) {
-      return RouteNames.mainTab;
+      return RouteNames.main;
     }
 
     return RouteNames.login;
