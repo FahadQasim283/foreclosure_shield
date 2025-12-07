@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foreclosure_shield/core/constants/string_consts.dart';
+import 'package:foreclosure_shield/core/theme/app_theme.dart';
 import 'core/routes/route_generator.dart';
 
 class AIForeClosureShield extends StatefulWidget {
@@ -15,6 +16,7 @@ class _AIForeClosureShieldState extends State<AIForeClosureShield> {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: AppStrings.appName,
+      theme: AppTheme.lightTheme,
       routerConfig: RouteGenerator.router,
     );
   }
