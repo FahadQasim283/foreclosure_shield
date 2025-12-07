@@ -208,69 +208,9 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppColors.neutral300),
                     ),
-                    child: Text(
-                      task.description,
-                      style: AppTypography.bodyMedium,
-                    ),
+                    child: Text(task.description, style: AppTypography.bodyMedium),
                   ),
                   const SizedBox(height: 24),
-
-                  // Additional Info
-                    Text('Action Steps', style: AppTypography.h3),
-                    const SizedBox(height: 12),
-                    ...task.actionSteps!.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final step = entry.value;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: priorityColor.withOpacity(0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${index + 1}',
-                                  style: AppTypography.bodyMedium.copyWith(
-                                    color: priorityColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(child: Text(step, style: AppTypography.bodyMedium)),
-                          ],
-                        ),
-                      );
-                    }),
-                    const SizedBox(height: 24),
-                  ],
-
-                  // Resources (if any)
-                  if (task.resources != null && task.resources!.isNotEmpty) ...[
-                    Text('Helpful Resources', style: AppTypography.h3),
-                    const SizedBox(height: 12),
-                    ...task.resources!.map((resource) {
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        child: ListTile(
-                          leading: const Icon(Icons.link, color: AppColors.primary),
-                          title: Text(resource, style: AppTypography.bodyMedium),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                          onTap: () {
-                            // Open resource
-                          },
-                        ),
-                      );
-                    }),
-                    const SizedBox(height: 24),
-                  ],
 
                   // Notes Section
                   Text('Notes', style: AppTypography.h3),

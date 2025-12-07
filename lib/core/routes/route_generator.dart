@@ -5,15 +5,22 @@ import '/core/routes/route_names.dart';
 import '/presentation/screens/splash_screen.dart';
 import '/presentation/screens/auth/login_screen.dart';
 import '/presentation/screens/auth/signup_screen.dart';
+import '/presentation/screens/auth/forgot_password_screen.dart';
+import '/presentation/screens/auth/verify_otp_screen.dart';
 import '/presentation/screens/main/main_screen.dart';
 import '/presentation/screens/assessment/start_assessment_screen.dart';
 import '/presentation/screens/assessment/assessment_result_screen.dart';
+import '/presentation/screens/assessment/assessment_questionnaire_screen.dart';
+import '/presentation/screens/assessment/assessment_history_screen.dart';
 import '/presentation/screens/action_plan/action_plan_screen.dart';
 import '/presentation/screens/action_plan/task_details_screen.dart';
 import '/presentation/screens/documents/generate_letter_screen.dart';
 import '/presentation/screens/documents/document_details_screen.dart';
+import '/presentation/screens/documents/upload_document_screen.dart';
 import '/presentation/screens/notifications/notifications_screen.dart';
 import '/presentation/screens/settings/settings_screen.dart';
+import '/presentation/screens/profile/edit_profile_screen.dart';
+import '/presentation/screens/about/about_screen.dart';
 import '/presentation/screens/subscription/subscription_plan_screen.dart';
 import '/presentation/screens/help_support/help_support_screen.dart';
 
@@ -33,12 +40,9 @@ class RouteGenerator {
       GoRoute(path: RouteNames.signup, builder: (context, state) => const SignupScreen()),
       GoRoute(
         path: RouteNames.forgotPassword,
-        builder: (context, state) => const Placeholder(), // TODO: Create ForgotPasswordScreen
+        builder: (context, state) => const ForgotPasswordScreen(),
       ),
-      GoRoute(
-        path: RouteNames.verifyOtp,
-        builder: (context, state) => const Placeholder(), // TODO: Create VerifyOtpScreen
-      ),
+      GoRoute(path: RouteNames.verifyOtp, builder: (context, state) => const VerifyOtpScreen()),
 
       // Main App
       GoRoute(path: RouteNames.main, builder: (context, state) => const MainScreen()),
@@ -50,8 +54,7 @@ class RouteGenerator {
       ),
       GoRoute(
         path: RouteNames.assessmentQuestionnaire,
-        builder: (context, state) =>
-            const Placeholder(), // TODO: Create AssessmentQuestionnaireScreen
+        builder: (context, state) => const AssessmentQuestionnaireScreen(),
       ),
       GoRoute(
         path: RouteNames.assessmentResult,
@@ -59,7 +62,7 @@ class RouteGenerator {
       ),
       GoRoute(
         path: RouteNames.assessmentHistory,
-        builder: (context, state) => const Placeholder(), // TODO: Create AssessmentHistoryScreen
+        builder: (context, state) => const AssessmentHistoryScreen(),
       ),
 
       // Action Plan
@@ -86,7 +89,7 @@ class RouteGenerator {
       ),
       GoRoute(
         path: RouteNames.uploadDocument,
-        builder: (context, state) => const Placeholder(), // TODO: Create UploadDocumentScreen
+        builder: (context, state) => const UploadDocumentScreen(),
       ),
 
       // Notifications
@@ -97,10 +100,7 @@ class RouteGenerator {
 
       // Settings & Profile
       GoRoute(path: RouteNames.settings, builder: (context, state) => const SettingsScreen()),
-      GoRoute(
-        path: RouteNames.editProfile,
-        builder: (context, state) => const Placeholder(), // TODO: Create EditProfileScreen
-      ),
+      GoRoute(path: RouteNames.editProfile, builder: (context, state) => const EditProfileScreen()),
       GoRoute(
         path: RouteNames.subscription,
         builder: (context, state) => const SubscriptionPlanScreen(),
@@ -110,10 +110,7 @@ class RouteGenerator {
         builder: (context, state) => const SubscriptionPlanScreen(),
       ),
       GoRoute(path: RouteNames.helpSupport, builder: (context, state) => const HelpSupportScreen()),
-      GoRoute(
-        path: RouteNames.about,
-        builder: (context, state) => const Placeholder(), // TODO: Create AboutScreen
-      ),
+      GoRoute(path: RouteNames.about, builder: (context, state) => const AboutScreen()),
 
       // Add more routes here as screens are created
     ],

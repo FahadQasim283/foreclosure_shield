@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '/core/theme/app_colors.dart';
 import '/core/theme/app_typography.dart';
-import '/data/models/document.dart';
 import '/data/mock_data.dart';
 
 class DocumentDetailsScreen extends StatelessWidget {
@@ -78,8 +77,8 @@ class DocumentDetailsScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    _getCategoryColor(document.category),
-                    _getCategoryColor(document.category).withOpacity(0.7),
+                    _getCategoryColor(document.documentType),
+                    _getCategoryColor(document.documentType).withOpacity(0.7),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -95,7 +94,7 @@ class DocumentDetailsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      document.category.toUpperCase(),
+                      document.documentType.toUpperCase(),
                       style: AppTypography.labelSmall.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -110,7 +109,7 @@ class DocumentDetailsScreen extends StatelessWidget {
                       Icon(Icons.calendar_today, size: 16, color: Colors.white.withOpacity(0.9)),
                       const SizedBox(width: 6),
                       Text(
-                        _formatDate(document.createdAt),
+                        _formatDate(document.uploadedDate),
                         style: AppTypography.bodySmall.copyWith(
                           color: Colors.white.withOpacity(0.9),
                         ),
@@ -119,7 +118,7 @@ class DocumentDetailsScreen extends StatelessWidget {
                       Icon(Icons.description, size: 16, color: Colors.white.withOpacity(0.9)),
                       const SizedBox(width: 6),
                       Text(
-                        document.fileType.toUpperCase(),
+                        (document.fileType ?? 'PDF').toUpperCase(),
                         style: AppTypography.bodySmall.copyWith(
                           color: Colors.white.withOpacity(0.9),
                         ),
@@ -245,29 +244,32 @@ class DocumentDetailsScreen extends StatelessWidget {
   Widget _buildInfoRow(String label, String value, [Color? valueColor]) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      children: [
-        SizedBox(
-          width: 100,
-          child: Text(
-            label,
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.neutral600,
-              fontWeight: FontWeight.w500,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: AppTypography.bodyMedium.copyWith(
+                color: AppColors.neutral600,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: AppTypography.bodyMedium.copyWith(
-              color: valueColor ?? AppColors.neutral800,
-              fontWeight: valueColor != null ? FontWeight.w600 : FontWeight.normal,
+          Expanded(
+            child: Text(
+              value,
+              style: AppTypography.bodyMedium.copyWith(
+                color: valueColor ?? AppColors.neutral800,
+                fontWeight: valueColor != null ? FontWeight.w600 : FontWeight.normal,
+              ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -281,21 +283,6 @@ class DocumentDetailsScreen extends StatelessWidget {
         return AppColors.secondary;
       case 'uploaded':
         return AppColors.blue;
-      default:
-        return AppColors.neutral600;
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'draft':
-        return AppColors.amber;
-      case 'sent':
-        return AppColors.blue;
-      case 'received':
-        return AppColors.green;
-      case 'pending':
-        return AppColors.orange;
       default:
         return AppColors.neutral600;
     }
