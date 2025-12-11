@@ -3,24 +3,30 @@ class User {
   final String email;
   final String name;
   final String? phone;
-  final String role; // 'client' or 'admin'
-  final DateTime createdAt;
-  final bool isEmailVerified;
-  final bool isPhoneVerified;
-  final String? subscriptionPlan; // 'basic', 'pro', 'premium'
+  final String? profileImage;
+  final String? propertyAddress;
+  final String? city;
+  final String? state;
+  final String? zipCode;
+  final String subscriptionType; // 'FREE', 'BASIC', 'PREMIUM'
   final DateTime? subscriptionExpiryDate;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   User({
     required this.id,
     required this.email,
     required this.name,
     this.phone,
-    required this.role,
-    required this.createdAt,
-    this.isEmailVerified = false,
-    this.isPhoneVerified = false,
-    this.subscriptionPlan,
+    this.profileImage,
+    this.propertyAddress,
+    this.city,
+    this.state,
+    this.zipCode,
+    this.subscriptionType = 'FREE',
     this.subscriptionExpiryDate,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -29,14 +35,17 @@ class User {
       email: json['email'] as String,
       name: json['name'] as String,
       phone: json['phone'] as String?,
-      role: json['role'] as String,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      isEmailVerified: json['is_email_verified'] as bool? ?? false,
-      isPhoneVerified: json['is_phone_verified'] as bool? ?? false,
-      subscriptionPlan: json['subscription_plan'] as String?,
-      subscriptionExpiryDate: json['subscription_expiry_date'] != null
-          ? DateTime.parse(json['subscription_expiry_date'] as String)
+      profileImage: json['profileImage'] as String?,
+      propertyAddress: json['propertyAddress'] as String?,
+      city: json['city'] as String?,
+      state: json['state'] as String?,
+      zipCode: json['zipCode'] as String?,
+      subscriptionType: json['subscriptionType'] as String? ?? 'FREE',
+      subscriptionExpiryDate: json['subscriptionExpiryDate'] != null
+          ? DateTime.parse(json['subscriptionExpiryDate'] as String)
           : null,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
@@ -46,12 +55,15 @@ class User {
       'email': email,
       'name': name,
       'phone': phone,
-      'role': role,
-      'created_at': createdAt.toIso8601String(),
-      'is_email_verified': isEmailVerified,
-      'is_phone_verified': isPhoneVerified,
-      'subscription_plan': subscriptionPlan,
-      'subscription_expiry_date': subscriptionExpiryDate?.toIso8601String(),
+      'profileImage': profileImage,
+      'propertyAddress': propertyAddress,
+      'city': city,
+      'state': state,
+      'zipCode': zipCode,
+      'subscriptionType': subscriptionType,
+      'subscriptionExpiryDate': subscriptionExpiryDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -60,24 +72,30 @@ class User {
     String? email,
     String? name,
     String? phone,
-    String? role,
-    DateTime? createdAt,
-    bool? isEmailVerified,
-    bool? isPhoneVerified,
-    String? subscriptionPlan,
+    String? profileImage,
+    String? propertyAddress,
+    String? city,
+    String? state,
+    String? zipCode,
+    String? subscriptionType,
     DateTime? subscriptionExpiryDate,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return User(
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
       phone: phone ?? this.phone,
-      role: role ?? this.role,
-      createdAt: createdAt ?? this.createdAt,
-      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
-      isPhoneVerified: isPhoneVerified ?? this.isPhoneVerified,
-      subscriptionPlan: subscriptionPlan ?? this.subscriptionPlan,
+      profileImage: profileImage ?? this.profileImage,
+      propertyAddress: propertyAddress ?? this.propertyAddress,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      zipCode: zipCode ?? this.zipCode,
+      subscriptionType: subscriptionType ?? this.subscriptionType,
       subscriptionExpiryDate: subscriptionExpiryDate ?? this.subscriptionExpiryDate,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }
