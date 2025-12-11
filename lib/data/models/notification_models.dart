@@ -132,9 +132,7 @@ class NotificationSettingsResponse {
   NotificationSettingsResponse({required this.settings});
 
   factory NotificationSettingsResponse.fromJson(Map<String, dynamic> json) {
-    return NotificationSettingsResponse(
-      settings: NotificationSettings.fromJson(json),
-    );
+    return NotificationSettingsResponse(settings: NotificationSettings.fromJson(json));
   }
 }
 
@@ -144,8 +142,6 @@ class UnreadCountResponse {
   UnreadCountResponse({required this.count});
 
   factory UnreadCountResponse.fromJson(Map<String, dynamic> json) {
-    return UnreadCountResponse(
-      count: json['count'] as int,
-    );
+    return UnreadCountResponse(count: json['count'] as int);
   }
 }

@@ -102,11 +102,7 @@ class SubscribeRequest {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'planId': planId,
-      'paymentMethodId': paymentMethodId,
-      'billingCycle': billingCycle,
-    };
+    return {'planId': planId, 'paymentMethodId': paymentMethodId, 'billingCycle': billingCycle};
   }
 }
 
@@ -116,9 +112,7 @@ class CancelSubscriptionRequest {
   CancelSubscriptionRequest({this.reason});
 
   Map<String, dynamic> toJson() {
-    return {
-      if (reason != null) 'reason': reason,
-    };
+    return {if (reason != null) 'reason': reason};
   }
 }
 
@@ -146,9 +140,7 @@ class CurrentSubscriptionResponse {
   CurrentSubscriptionResponse({required this.subscription});
 
   factory CurrentSubscriptionResponse.fromJson(Map<String, dynamic> json) {
-    return CurrentSubscriptionResponse(
-      subscription: UserSubscription.fromJson(json),
-    );
+    return CurrentSubscriptionResponse(subscription: UserSubscription.fromJson(json));
   }
 }
 
@@ -156,10 +148,7 @@ class SubscribeResponse {
   final UserSubscription subscription;
   final String paymentStatus;
 
-  SubscribeResponse({
-    required this.subscription,
-    required this.paymentStatus,
-  });
+  SubscribeResponse({required this.subscription, required this.paymentStatus});
 
   factory SubscribeResponse.fromJson(Map<String, dynamic> json) {
     return SubscribeResponse(

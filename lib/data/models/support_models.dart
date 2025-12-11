@@ -67,8 +67,8 @@ class SupportTicket {
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       messages: json['messages'] != null
           ? (json['messages'] as List)
-              .map((e) => TicketMessage.fromJson(e as Map<String, dynamic>))
-              .toList()
+                .map((e) => TicketMessage.fromJson(e as Map<String, dynamic>))
+                .toList()
           : null,
     );
   }
@@ -154,12 +154,7 @@ class ContactUsRequest {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'email': email,
-      'subject': subject,
-      'message': message,
-    };
+    return {'name': name, 'email': email, 'subject': subject, 'message': message};
   }
 }
 
@@ -171,18 +166,12 @@ class FaqListResponse {
   final List<FaqItem> faqs;
   final List<String> categories;
 
-  FaqListResponse({
-    required this.faqs,
-    required this.categories,
-  });
+  FaqListResponse({required this.faqs, required this.categories});
 
   factory FaqListResponse.fromJson(Map<String, dynamic> json) {
     return FaqListResponse(
-      faqs: (json['faqs'] as List)
-          .map((e) => FaqItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      categories:
-          (json['categories'] as List).map((e) => e as String).toList(),
+      faqs: (json['faqs'] as List).map((e) => FaqItem.fromJson(e as Map<String, dynamic>)).toList(),
+      categories: (json['categories'] as List).map((e) => e as String).toList(),
     );
   }
 }
@@ -193,9 +182,7 @@ class TicketResponse {
   TicketResponse({required this.ticket});
 
   factory TicketResponse.fromJson(Map<String, dynamic> json) {
-    return TicketResponse(
-      ticket: SupportTicket.fromJson(json),
-    );
+    return TicketResponse(ticket: SupportTicket.fromJson(json));
   }
 }
 
@@ -203,10 +190,7 @@ class TicketsListResponse {
   final List<SupportTicket> tickets;
   final Pagination pagination;
 
-  TicketsListResponse({
-    required this.tickets,
-    required this.pagination,
-  });
+  TicketsListResponse({required this.tickets, required this.pagination});
 
   factory TicketsListResponse.fromJson(Map<String, dynamic> json) {
     return TicketsListResponse(
@@ -224,9 +208,7 @@ class TicketMessageResponse {
   TicketMessageResponse({required this.message});
 
   factory TicketMessageResponse.fromJson(Map<String, dynamic> json) {
-    return TicketMessageResponse(
-      message: TicketMessage.fromJson(json),
-    );
+    return TicketMessageResponse(message: TicketMessage.fromJson(json));
   }
 }
 
@@ -234,10 +216,7 @@ class ContactUsResponse {
   final String ticketId;
   final String status;
 
-  ContactUsResponse({
-    required this.ticketId,
-    required this.status,
-  });
+  ContactUsResponse({required this.ticketId, required this.status});
 
   factory ContactUsResponse.fromJson(Map<String, dynamic> json) {
     return ContactUsResponse(

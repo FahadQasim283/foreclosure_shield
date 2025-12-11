@@ -134,9 +134,7 @@ class SubscriptionInfo {
     return SubscriptionInfo(
       planName: json['planName'] as String,
       status: json['status'] as String,
-      expiryDate: json['expiryDate'] != null
-          ? DateTime.parse(json['expiryDate'] as String)
-          : null,
+      expiryDate: json['expiryDate'] != null ? DateTime.parse(json['expiryDate'] as String) : null,
       daysRemaining: json['daysRemaining'] as int,
     );
   }
@@ -192,8 +190,7 @@ class DashboardStatistics {
 
   factory DashboardStatistics.fromJson(Map<String, dynamic> json) {
     return DashboardStatistics(
-      assessmentsByMonth:
-          Map<String, int>.from(json['assessmentsByMonth'] as Map),
+      assessmentsByMonth: Map<String, int>.from(json['assessmentsByMonth'] as Map),
       tasksByCategory: Map<String, int>.from(json['tasksByCategory'] as Map),
       documentsByType: Map<String, int>.from(json['documentsByType'] as Map),
       monthlyProgress: (json['monthlyProgress'] as List)
@@ -239,9 +236,7 @@ class DashboardSummaryResponse {
   DashboardSummaryResponse({required this.dashboard});
 
   factory DashboardSummaryResponse.fromJson(Map<String, dynamic> json) {
-    return DashboardSummaryResponse(
-      dashboard: DashboardSummary.fromJson(json),
-    );
+    return DashboardSummaryResponse(dashboard: DashboardSummary.fromJson(json));
   }
 }
 
@@ -251,8 +246,6 @@ class DashboardStatisticsResponse {
   DashboardStatisticsResponse({required this.statistics});
 
   factory DashboardStatisticsResponse.fromJson(Map<String, dynamic> json) {
-    return DashboardStatisticsResponse(
-      statistics: DashboardStatistics.fromJson(json),
-    );
+    return DashboardStatisticsResponse(statistics: DashboardStatistics.fromJson(json));
   }
 }

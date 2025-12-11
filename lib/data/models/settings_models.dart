@@ -6,11 +6,7 @@ class AppSettings {
   final PrivacySettings privacy;
   final AppPreferences preferences;
 
-  AppSettings({
-    required this.notifications,
-    required this.privacy,
-    required this.preferences,
-  });
+  AppSettings({required this.notifications, required this.privacy, required this.preferences});
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
     return AppSettings(
@@ -117,11 +113,7 @@ class UpdateSettingsRequest {
   final Map<String, dynamic>? privacy;
   final Map<String, dynamic>? preferences;
 
-  UpdateSettingsRequest({
-    this.notifications,
-    this.privacy,
-    this.preferences,
-  });
+  UpdateSettingsRequest({this.notifications, this.privacy, this.preferences});
 
   Map<String, dynamic> toJson() {
     return {
@@ -156,16 +148,10 @@ class DeleteAccountRequest {
   final String password;
   final String? reason;
 
-  DeleteAccountRequest({
-    required this.password,
-    this.reason,
-  });
+  DeleteAccountRequest({required this.password, this.reason});
 
   Map<String, dynamic> toJson() {
-    return {
-      'password': password,
-      if (reason != null) 'reason': reason,
-    };
+    return {'password': password, if (reason != null) 'reason': reason};
   }
 }
 
@@ -179,9 +165,7 @@ class SettingsResponse {
   SettingsResponse({required this.settings});
 
   factory SettingsResponse.fromJson(Map<String, dynamic> json) {
-    return SettingsResponse(
-      settings: AppSettings.fromJson(json),
-    );
+    return SettingsResponse(settings: AppSettings.fromJson(json));
   }
 }
 
@@ -189,10 +173,7 @@ class ChangePasswordResponse {
   final bool success;
   final DateTime changedAt;
 
-  ChangePasswordResponse({
-    required this.success,
-    required this.changedAt,
-  });
+  ChangePasswordResponse({required this.success, required this.changedAt});
 
   factory ChangePasswordResponse.fromJson(Map<String, dynamic> json) {
     return ChangePasswordResponse(
@@ -206,10 +187,7 @@ class DeleteAccountResponse {
   final bool deleted;
   final DateTime deletedAt;
 
-  DeleteAccountResponse({
-    required this.deleted,
-    required this.deletedAt,
-  });
+  DeleteAccountResponse({required this.deleted, required this.deletedAt});
 
   factory DeleteAccountResponse.fromJson(Map<String, dynamic> json) {
     return DeleteAccountResponse(

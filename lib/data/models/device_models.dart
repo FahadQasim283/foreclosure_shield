@@ -73,9 +73,7 @@ class RegisterDeviceResponse {
   RegisterDeviceResponse({required this.device});
 
   factory RegisterDeviceResponse.fromJson(Map<String, dynamic> json) {
-    return RegisterDeviceResponse(
-      device: Device.fromJson(json),
-    );
+    return RegisterDeviceResponse(device: Device.fromJson(json));
   }
 }
 
@@ -83,10 +81,7 @@ class UnregisterDeviceResponse {
   final bool success;
   final String deviceId;
 
-  UnregisterDeviceResponse({
-    required this.success,
-    required this.deviceId,
-  });
+  UnregisterDeviceResponse({required this.success, required this.deviceId});
 
   factory UnregisterDeviceResponse.fromJson(Map<String, dynamic> json) {
     return UnregisterDeviceResponse(
