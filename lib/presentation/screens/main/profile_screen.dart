@@ -56,7 +56,7 @@ class ProfileScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '${user.subscriptionPlan?.toUpperCase() ?? 'FREE'} PLAN',
+                      '${user.subscriptionType.toUpperCase()} PLAN',
                       style: AppTypography.badge.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.bold,

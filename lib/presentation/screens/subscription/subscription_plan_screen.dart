@@ -21,7 +21,7 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           // Current Plan Badge
-          if (MockData.mockUser.subscriptionPlan != 'FREE')
+          if (MockData.mockUser.subscriptionType != 'FREE')
             Container(
               padding: const EdgeInsets.all(16),
               margin: const EdgeInsets.only(bottom: 24),
@@ -39,7 +39,7 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Current Plan: ${MockData.mockUser.subscriptionPlan}',
+                          'Current Plan: ${MockData.mockUser.subscriptionType}',
                           style: AppTypography.h3.copyWith(color: AppColors.secondary),
                         ),
                         Text(
@@ -85,7 +85,7 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen> {
               'Community support',
               'Educational resources',
             ],
-            isCurrent: MockData.mockUser.subscriptionPlan == 'FREE',
+            isCurrent: MockData.mockUser.subscriptionType == 'FREE',
             color: Colors.grey,
           ),
           const SizedBox(height: 16),
@@ -105,7 +105,7 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen> {
               'Priority notifications',
               'Document tracking',
             ],
-            isCurrent: MockData.mockUser.subscriptionPlan == 'BASIC',
+            isCurrent: MockData.mockUser.subscriptionType == 'BASIC',
             color: AppColors.primary,
           ),
           const SizedBox(height: 16),
@@ -153,7 +153,7 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen> {
                     'Court filing assistance',
                     'Financial planning tools',
                   ],
-                  isCurrent: MockData.mockUser.subscriptionPlan == 'PRO',
+                  isCurrent: MockData.mockUser.subscriptionType == 'PRO',
                   color: AppColors.secondary,
                   noBorder: true,
                 ),
@@ -179,7 +179,7 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen> {
               'Unlimited AI generations',
               'Custom legal strategies',
             ],
-            isCurrent: MockData.mockUser.subscriptionPlan == 'PREMIUM',
+            isCurrent: MockData.mockUser.subscriptionType == 'PREMIUM',
             color: Colors.deepPurple,
           ),
           const SizedBox(height: 32),

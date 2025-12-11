@@ -44,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             title: Text('Subscription Plan', style: AppTypography.bodyLarge),
             subtitle: Text(
-              '${MockData.mockUser.subscriptionPlan} Plan',
+              '${MockData.mockUser.subscriptionType} Plan',
               style: AppTypography.bodySmall.copyWith(color: AppColors.secondary),
             ),
             trailing: const Icon(Icons.chevron_right),

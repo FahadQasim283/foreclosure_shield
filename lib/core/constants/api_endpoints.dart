@@ -1,6 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  
+
   // Base URL - Update this with your backend server URL
   static const String _baseUrl = "http://127.0.0.1:5000/v1";
   static String get baseUrl => _baseUrl;
