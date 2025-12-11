@@ -1,8 +1,9 @@
-import 'dart:convert';
 import '../services/network/api_client.dart' show ApiClient;
 import '/core/constants/api_endpoints.dart';
 import '../services/local_storage/token_storage.dart';
 import '/data/models/user.dart';
+import '/data/models/api_response.dart';
+import '/data/models/auth_models.dart';
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:dio/dio.dart';
 
@@ -12,226 +13,297 @@ class AuthRepository {
   // ===============================
   // SIGNUP
   // ===============================
-  Future<Map<String, dynamic>> signup({
-    required String name,
-    required String email,
-    required String phone,
-    required String password,
-    required String confirmPassword,
-  }) async {
+  Future<ApiResponse<AuthResponse>> signup(SignupRequest request) async {
     try {
-      final response = await _apiClient.post(
-        ApiEndpoints.signup,
-        data: {
-          'name': name,
-          'email': email,
-          'phone': phone,
-          'password': password,
-          'confirmPassword': confirmPassword,
-        },
-      );
+      final response = await _apiClient.post(ApiEndpoints.signup, data: request.toJson());
 
-      if (response['success'] == true) {
-        // Save token
-        final token = response['data']['token'];
-        final refreshToken = response['data']['refreshToken'];
-        await TokenStorage.saveToken(token);
-        await TokenStorage.saveRefreshToken(refreshToken);
+      if (response.data['success'] == true) {
+        final authResponse = AuthResponse.fromJson(response.data['data']);
 
-        // Parse user
-        final user = User.fromJson(response['data']['user']);
+        // Save tokens
+        await TokenStorage.saveTokens(authResponse.token, authResponse.refreshToken);
 
-        return {'success': true, 'user': user, 'token': token, 'refreshToken': refreshToken};
+        return ApiResponse.success(authResponse, message: response.data['message'] as String?);
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Signup failed',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Signup failed',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Signup error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Signup failed',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Signup failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Signup error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // LOGIN
   // ===============================
-  Future<Map<String, dynamic>> login({required String email, required String password}) async {
+  Future<ApiResponse<AuthResponse>> login(LoginRequest request) async {
     try {
-      final response = await _apiClient.post(
-        ApiEndpoints.login,
-        data: {'email': email, 'password': password},
-      );
+      final response = await _apiClient.post(ApiEndpoints.login, data: request.toJson());
 
-      if (response['success'] == true) {
+      if (response.data['success'] == true) {
+        final authResponse = AuthResponse.fromJson(response.data['data']);
+
         // Save tokens
-        final token = response['data']['token'];
-        final refreshToken = response['data']['refreshToken'];
-        await TokenStorage.saveToken(token);
-        await TokenStorage.saveRefreshToken(refreshToken);
+        await TokenStorage.saveTokens(authResponse.token, authResponse.refreshToken);
 
-        // Parse user
-        final user = User.fromJson(response['data']['user']);
-
-        return {'success': true, 'user': user, 'token': token, 'refreshToken': refreshToken};
+        return ApiResponse.success(authResponse, message: response.data['message'] as String?);
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Login failed',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Login failed',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Login error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Login failed',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Login failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Login error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // FORGOT PASSWORD
   // ===============================
-  Future<Map<String, dynamic>> forgotPassword({required String email}) async {
+  Future<ApiResponse<ForgotPasswordResponse>> forgotPassword(ForgotPasswordRequest request) async {
     try {
-      final response = await _apiClient.post(ApiEndpoints.forgotPassword, data: {'email': email});
+      final response = await _apiClient.post(ApiEndpoints.forgotPassword, data: request.toJson());
 
-      if (response['success'] == true) {
-        return {'success': true, 'message': response['message']};
+      if (response.data['success'] == true) {
+        final forgotResponse = ForgotPasswordResponse.fromJson(response.data['data']);
+        return ApiResponse.success(forgotResponse, message: response.data['message'] as String?);
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Forgot password failed',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Forgot password failed',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Forgot password error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Forgot password failed',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Forgot password failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Forgot password error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // VERIFY OTP
   // ===============================
-  Future<Map<String, dynamic>> verifyOtp({required String email, required String otp}) async {
+  Future<ApiResponse<VerifyOtpResponse>> verifyOtp(VerifyOtpRequest request) async {
     try {
-      final response = await _apiClient.post(
-        ApiEndpoints.verifyOtp,
-        data: {'email': email, 'otp': otp},
-      );
+      final response = await _apiClient.post(ApiEndpoints.verifyOtp, data: request.toJson());
 
-      if (response['success'] == true) {
-        return {
-          'success': true,
-          'verified': response['data']['verified'],
-          'resetToken': response['data']['resetToken'],
-        };
+      if (response.data['success'] == true) {
+        final verifyResponse = VerifyOtpResponse.fromJson(response.data['data']);
+        return ApiResponse.success(verifyResponse, message: response.data['message'] as String?);
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'OTP verification failed',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'OTP verification failed',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Verify OTP error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'OTP verification failed',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'OTP verification failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Verify OTP error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // RESET PASSWORD
   // ===============================
-  Future<Map<String, dynamic>> resetPassword({
-    required String resetToken,
-    required String newPassword,
-    required String confirmPassword,
-  }) async {
+  Future<ApiResponse<ResetPasswordResponse>> resetPassword(ResetPasswordRequest request) async {
     try {
-      final response = await _apiClient.post(
-        ApiEndpoints.resetPassword,
-        data: {
-          'resetToken': resetToken,
-          'newPassword': newPassword,
-          'confirmPassword': confirmPassword,
-        },
-      );
+      final response = await _apiClient.post(ApiEndpoints.resetPassword, data: request.toJson());
 
-      if (response['success'] == true) {
-        return {'success': true, 'message': response['message']};
+      if (response.data['success'] == true) {
+        final resetResponse = ResetPasswordResponse.fromJson(response.data['data']);
+        return ApiResponse.success(resetResponse, message: response.data['message'] as String?);
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Password reset failed',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Password reset failed',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Reset password error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Password reset failed',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Password reset failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Reset password error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // REFRESH TOKEN
   // ===============================
-  Future<Map<String, dynamic>> refreshAccessToken() async {
+  Future<ApiResponse<RefreshTokenResponse>> refreshAccessToken() async {
     try {
       final refreshToken = await TokenStorage.getRefreshToken();
       if (refreshToken == null) {
-        return {'success': false, 'message': 'No refresh token found'};
+        return ApiResponse.failure(
+          'No refresh token found',
+          error: ApiError(message: 'No refresh token found'),
+        );
       }
 
       final response = await _apiClient.post(
         ApiEndpoints.refreshToken,
-        data: {'refreshToken': refreshToken},
+        data: RefreshTokenRequest(refreshToken: refreshToken).toJson(),
       );
 
-      if (response['success'] == true) {
-        final newToken = response['data']['token'];
-        final newRefreshToken = response['data']['refreshToken'];
+      if (response.data['success'] == true) {
+        final refreshResponse = RefreshTokenResponse.fromJson(response.data['data']);
 
-        await TokenStorage.saveToken(newToken);
-        await TokenStorage.saveRefreshToken(newRefreshToken);
+        // Save new tokens
+        await TokenStorage.saveTokens(refreshResponse.token, refreshResponse.refreshToken);
 
-        return {'success': true, 'token': newToken, 'refreshToken': newRefreshToken};
+        return ApiResponse.success(refreshResponse, message: response.data['message'] as String?);
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Token refresh failed',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Token refresh failed',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Refresh token error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Token refresh failed',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Token refresh failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Refresh token error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // LOGOUT
   // ===============================
-  Future<Map<String, dynamic>> logout() async {
+  Future<ApiResponse<void>> logout() async {
     try {
-      final token = await TokenStorage.getToken();
+      final token = await TokenStorage.getAccessToken();
 
       if (token != null) {
-        await _apiClient.post(
-          ApiEndpoints.logout,
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
-        );
+        await _apiClient.post(ApiEndpoints.logout);
       }
 
       // Clear local tokens
-      await TokenStorage.clearTokens();
+      await TokenStorage.clearAll();
 
-      return {'success': true, 'message': 'Logout successful'};
+      return ApiResponse.success(null, message: 'Logout successful');
+    } on DioException catch (e) {
+      debugPrint('Logout error: $e');
+      // Clear tokens even if API call fails
+      await TokenStorage.clearAll();
+      return ApiResponse.success(null, message: 'Logout successful');
     } catch (e) {
       debugPrint('Logout error: $e');
       // Clear tokens even if API call fails
-      await TokenStorage.clearTokens();
-      return {'success': true, 'message': 'Logout successful'};
+      await TokenStorage.clearAll();
+      return ApiResponse.success(null, message: 'Logout successful');
     }
   }
 
   // ===============================
   // GET CURRENT USER
   // ===============================
-  Future<User?> getCurrentUser() async {
+  Future<ApiResponse<User>> getCurrentUser() async {
     try {
-      final token = await TokenStorage.getToken();
-      if (token == null) return null;
-
-      final response = await _apiClient.get(
-        ApiEndpoints.userProfile,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-
-      if (response['success'] == true) {
-        return User.fromJson(response['data']);
+      final token = await TokenStorage.getAccessToken();
+      if (token == null) {
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
       }
 
-      return null;
+      final response = await _apiClient.get(ApiEndpoints.userProfile);
+
+      if (response.data['success'] == true) {
+        final user = User.fromJson(response.data['data']);
+        return ApiResponse.success(user, message: response.data['message'] as String?);
+      }
+
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Failed to fetch user',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Failed to fetch user',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Get current user error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch user',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch user',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Get current user error: $e');
-      return null;
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
@@ -239,7 +311,7 @@ class AuthRepository {
   // CHECK IF LOGGED IN
   // ===============================
   Future<bool> isLoggedIn() async {
-    final token = await TokenStorage.getToken();
+    final token = await TokenStorage.getAccessToken();
     return token != null && token.isNotEmpty;
   }
 }

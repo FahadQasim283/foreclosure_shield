@@ -3,6 +3,8 @@ import '../services/network/api_client.dart';
 import '/core/constants/api_endpoints.dart';
 import '../services/local_storage/token_storage.dart';
 import '/data/models/action_task.dart';
+import '/data/models/api_response.dart';
+import '/data/models/action_plan_models.dart';
 import 'package:flutter/material.dart' show debugPrint;
 
 class ActionPlanRepository {
@@ -11,11 +13,14 @@ class ActionPlanRepository {
   // ===============================
   // GET ACTION PLAN
   // ===============================
-  Future<Map<String, dynamic>> getActionPlan({String? assessmentId}) async {
+  Future<ApiResponse<ActionPlanResponse>> getActionPlan({String? assessmentId}) async {
     try {
-      final token = await TokenStorage.getToken();
+      final token = await TokenStorage.getAccessToken();
       if (token == null) {
-        return {'success': false, 'message': 'No authentication token'};
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
       }
 
       String url = ApiEndpoints.actionPlan;
@@ -23,145 +28,222 @@ class ActionPlanRepository {
         url += '?assessmentId=$assessmentId';
       }
 
-      final response = await _apiClient.get(
-        url,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final response = await _apiClient.get(url);
 
-      if (response['success'] == true) {
-        final tasks = (response['data']['tasks'] as List)
-            .map((json) => ActionTask.fromJson(json))
-            .toList();
-
-        return {
-          'success': true,
-          'tasks': tasks,
-          'progress': response['data']['progress'],
-          'actionPlanId': response['data']['id'],
-        };
+      if (response.data['success'] == true) {
+        final actionPlanResponse = ActionPlanResponse.fromJson(response.data['data']);
+        return ApiResponse.success(
+          actionPlanResponse,
+          message: response.data['message'] as String?,
+        );
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Failed to fetch action plan',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Failed to fetch action plan',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Get action plan error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch action plan',
+        error: ApiError(
+          message:
+              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch action plan',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Get action plan error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // GET TASK DETAILS
   // ===============================
-  Future<Map<String, dynamic>> getTaskDetails(String taskId) async {
+  Future<ApiResponse<TaskDetailsResponse>> getTaskDetails(String taskId) async {
     try {
-      final token = await TokenStorage.getToken();
+      final token = await TokenStorage.getAccessToken();
       if (token == null) {
-        return {'success': false, 'message': 'No authentication token'};
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
       }
 
-      final response = await _apiClient.get(
-        '${ApiEndpoints.taskDetails}/$taskId',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      final response = await _apiClient.get('${ApiEndpoints.taskDetails}/$taskId');
+
+      if (response.data['success'] == true) {
+        final taskResponse = TaskDetailsResponse.fromJson(response.data['data']);
+        return ApiResponse.success(taskResponse, message: response.data['message'] as String?);
+      }
+
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Failed to fetch task details',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Failed to fetch task details',
+          code: response.statusCode?.toString(),
+        ),
       );
-
-      if (response['success'] == true) {
-        final task = ActionTask.fromJson(response['data']);
-        return {'success': true, 'task': task};
-      }
-
-      return {'success': false, 'message': response['error']['message']};
+    } on DioException catch (e) {
+      debugPrint('Get task details error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch task details',
+        error: ApiError(
+          message:
+              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch task details',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Get task details error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // UPDATE TASK STATUS
   // ===============================
-  Future<Map<String, dynamic>> updateTaskStatus({
+  Future<ApiResponse<UpdateTaskStatusResponse>> updateTaskStatus({
     required String taskId,
-    required bool isCompleted,
+    required UpdateTaskStatusRequest request,
   }) async {
     try {
-      final token = await TokenStorage.getToken();
+      final token = await TokenStorage.getAccessToken();
       if (token == null) {
-        return {'success': false, 'message': 'No authentication token'};
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
       }
 
       final response = await _apiClient.patch(
         '${ApiEndpoints.updateTaskStatus}/$taskId/status',
-        data: {'isCompleted': isCompleted},
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        data: request.toJson(),
       );
 
-      if (response['success'] == true) {
-        return {'success': true, 'message': response['message'], 'data': response['data']};
+      if (response.data['success'] == true) {
+        final statusResponse = UpdateTaskStatusResponse.fromJson(response.data['data']);
+        return ApiResponse.success(statusResponse, message: response.data['message'] as String?);
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Failed to update task status',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Failed to update task status',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Update task status error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update task status',
+        error: ApiError(
+          message:
+              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update task status',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Update task status error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // UPDATE TASK NOTES
   // ===============================
-  Future<Map<String, dynamic>> updateTaskNotes({
+  Future<ApiResponse<UpdateTaskNotesResponse>> updateTaskNotes({
     required String taskId,
-    required String notes,
+    required UpdateTaskNotesRequest request,
   }) async {
     try {
-      final token = await TokenStorage.getToken();
+      final token = await TokenStorage.getAccessToken();
       if (token == null) {
-        return {'success': false, 'message': 'No authentication token'};
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
       }
 
       final response = await _apiClient.patch(
         '${ApiEndpoints.updateTaskNotes}/$taskId/notes',
-        data: {'notes': notes},
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        data: request.toJson(),
       );
 
-      if (response['success'] == true) {
-        return {'success': true, 'message': response['message'], 'data': response['data']};
+      if (response.data['success'] == true) {
+        final notesResponse = UpdateTaskNotesResponse.fromJson(response.data['data']);
+        return ApiResponse.success(notesResponse, message: response.data['message'] as String?);
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Failed to update task notes',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Failed to update task notes',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Update task notes error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update task notes',
+        error: ApiError(
+          message:
+              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update task notes',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Update task notes error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // GET TASKS BY CATEGORY
   // ===============================
-  Future<Map<String, dynamic>> getTasksByCategory(String category) async {
+  Future<ApiResponse<TasksByCategoryResponse>> getTasksByCategory(String category) async {
     try {
-      final token = await TokenStorage.getToken();
+      final token = await TokenStorage.getAccessToken();
       if (token == null) {
-        return {'success': false, 'message': 'No authentication token'};
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
       }
 
-      final response = await _apiClient.get(
-        '${ApiEndpoints.tasksByCategory}/$category',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      final response = await _apiClient.get('${ApiEndpoints.tasksByCategory}/$category');
+
+      if (response.data['success'] == true) {
+        final categoryResponse = TasksByCategoryResponse.fromJson(response.data['data']);
+        return ApiResponse.success(categoryResponse, message: response.data['message'] as String?);
+      }
+
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Failed to fetch tasks by category',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Failed to fetch tasks by category',
+          code: response.statusCode?.toString(),
+        ),
       );
-
-      if (response['success'] == true) {
-        final tasks = (response['data']['tasks'] as List)
-            .map((json) => ActionTask.fromJson(json))
-            .toList();
-
-        return {'success': true, 'category': response['data']['category'], 'tasks': tasks};
-      }
-
-      return {'success': false, 'message': response['error']['message']};
+    } on DioException catch (e) {
+      debugPrint('Get tasks by category error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch tasks by category',
+        error: ApiError(
+          message:
+              e.response?.data['error']?['message'] ??
+              e.message ??
+              'Failed to fetch tasks by category',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Get tasks by category error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 }

@@ -3,6 +3,8 @@ import '../services/network/api_client.dart';
 import '/core/constants/api_endpoints.dart';
 import '../services/local_storage/token_storage.dart';
 import '/data/models/user.dart';
+import '/data/models/api_response.dart';
+import '/data/models/user_models.dart';
 import 'package:flutter/material.dart' show debugPrint;
 
 class UserRepository {
@@ -11,81 +13,113 @@ class UserRepository {
   // ===============================
   // GET USER PROFILE
   // ===============================
-  Future<Map<String, dynamic>> getUserProfile() async {
+  Future<ApiResponse<UserProfileResponse>> getUserProfile() async {
     try {
-      final token = await TokenStorage.getToken();
+      final token = await TokenStorage.getAccessToken();
       if (token == null) {
-        return {'success': false, 'message': 'No authentication token'};
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
       }
 
-      final response = await _apiClient.get(
-        ApiEndpoints.userProfile,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      final response = await _apiClient.get(ApiEndpoints.userProfile);
+
+      if (response.data['success'] == true) {
+        final userResponse = UserProfileResponse.fromJson(response.data['data']);
+        return ApiResponse.success(
+          userResponse,
+          message: response.data['message'] as String?,
+        );
+      }
+
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Failed to fetch profile',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Failed to fetch profile',
+          code: response.statusCode?.toString(),
+        ),
       );
-
-      if (response['success'] == true) {
-        final user = User.fromJson(response['data']);
-        return {'success': true, 'user': user};
-      }
-
-      return {'success': false, 'message': response['error']['message']};
+    } on DioException catch (e) {
+      debugPrint('Get user profile error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch profile',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch profile',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Get user profile error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(
+        e.toString(),
+        error: ApiError(message: e.toString()),
+      );
     }
   }
 
   // ===============================
   // UPDATE USER PROFILE
   // ===============================
-  Future<Map<String, dynamic>> updateProfile({
-    String? name,
-    String? phone,
-    String? propertyAddress,
-    String? city,
-    String? state,
-    String? zipCode,
-  }) async {
+  Future<ApiResponse<UpdateProfileResponse>> updateProfile(UpdateProfileRequest request) async {
     try {
-      final token = await TokenStorage.getToken();
+      final token = await TokenStorage.getAccessToken();
       if (token == null) {
-        return {'success': false, 'message': 'No authentication token'};
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
       }
-
-      final data = <String, dynamic>{};
-      if (name != null) data['name'] = name;
-      if (phone != null) data['phone'] = phone;
-      if (propertyAddress != null) data['propertyAddress'] = propertyAddress;
-      if (city != null) data['city'] = city;
-      if (state != null) data['state'] = state;
-      if (zipCode != null) data['zipCode'] = zipCode;
 
       final response = await _apiClient.put(
         ApiEndpoints.updateProfile,
-        data: data,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        data: request.toJson(),
       );
 
-      if (response['success'] == true) {
-        final user = User.fromJson(response['data']);
-        return {'success': true, 'user': user, 'message': response['message']};
+      if (response.data['success'] == true) {
+        final updateResponse = UpdateProfileResponse.fromJson(response.data['data']);
+        return ApiResponse.success(
+          updateResponse,
+          message: response.data['message'] as String?,
+        );
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Profile update failed',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Profile update failed',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Update profile error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Profile update failed',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Profile update failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Update profile error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(
+        e.toString(),
+        error: ApiError(message: e.toString()),
+      );
     }
   }
 
   // ===============================
   // UPLOAD PROFILE IMAGE
   // ===============================
-  Future<Map<String, dynamic>> uploadProfileImage(String filePath) async {
+  Future<ApiResponse<UploadProfileImageResponse>> uploadProfileImage(String filePath) async {
     try {
-      final token = await TokenStorage.getToken();
+      final token = await TokenStorage.getAccessToken();
       if (token == null) {
-        return {'success': false, 'message': 'No authentication token'};
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
       }
 
       final formData = FormData.fromMap({'image': await MultipartFile.fromFile(filePath)});
@@ -93,23 +127,38 @@ class UserRepository {
       final response = await _apiClient.post(
         ApiEndpoints.uploadProfileImage,
         data: formData,
-        options: Options(
-          headers: {'Authorization': 'Bearer $token', 'Content-Type': 'multipart/form-data'},
-        ),
       );
 
-      if (response['success'] == true) {
-        return {
-          'success': true,
-          'profileImage': response['data']['profileImage'],
-          'message': response['message'],
-        };
+      if (response.data['success'] == true) {
+        final uploadResponse = UploadProfileImageResponse.fromJson(response.data['data']);
+        return ApiResponse.success(
+          uploadResponse,
+          message: response.data['message'] as String?,
+        );
       }
 
-      return {'success': false, 'message': response['error']['message']};
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Image upload failed',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Image upload failed',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Upload profile image error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Image upload failed',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Image upload failed',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
     } catch (e) {
       debugPrint('Upload profile image error: $e');
-      return {'success': false, 'message': e.toString()};
+      return ApiResponse.failure(
+        e.toString(),
+        error: ApiError(message: e.toString()),
+      );
     }
   }
 }
