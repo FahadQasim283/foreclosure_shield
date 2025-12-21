@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../data/models/api_response.dart';
 import '../data/models/auth_models.dart';
-import '../data/models/user_models.dart';
 import '../data/models/user.dart';
 import '../repo/auth_repository.dart';
 import '../services/token_storage.dart';

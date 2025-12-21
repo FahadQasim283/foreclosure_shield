@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
 import '../../../core/theme/theme.dart';
+import '../../../state/auth_provider.dart';
+import '../../../data/models/auth_models.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,13 +32,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    final authProvider = context.read<AuthProvider>();
+    final success = await authProvider.login(
+      LoginRequest(email: _emailController.text.trim(), password: _passwordController.text),
+    );
 
     if (mounted) {
       setState(() => _isLoading = false);
-      // Navigate to main screen
-      context.go(RouteNames.main);
+
+      if (success) {
+        context.go(RouteNames.main);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage ?? 'Login failed'),
+            backgroundColor: AppColors.red,
+          ),
+        );
+      }
     }
   }
 

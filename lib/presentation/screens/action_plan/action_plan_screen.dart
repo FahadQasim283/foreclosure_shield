@@ -1,109 +1,119 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
 import '../../../core/theme/theme.dart';
-import '../../../data/mock_data.dart';
+import '../../../state/action_plan_provider.dart';
 
-class ActionPlanScreen extends StatelessWidget {
+class ActionPlanScreen extends StatefulWidget {
   const ActionPlanScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final assessment = MockData.mockAssessment;
-    final tasks = MockData.mockTasks;
+  State<ActionPlanScreen> createState() => _ActionPlanScreenState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Action Plan'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.download),
-            onPressed: () {
-              // Download action plan
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Header Stats
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: AppColors.primaryGradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
+class _ActionPlanScreenState extends State<ActionPlanScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadActionPlan();
+    });
+  }
+
+  Future<void> _loadActionPlan() async {
+    final actionPlanProvider = Provider.of<ActionPlanProvider>(context, listen: false);
+    await actionPlanProvider.getActionPlan();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ActionPlanProvider>(
+      builder: (context, actionPlanProvider, child) {
+        if (actionPlanProvider.isLoading && !actionPlanProvider.hasActionPlan) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Action Plan')),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (actionPlanProvider.hasError || !actionPlanProvider.hasActionPlan) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Action Plan')),
+            body: Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
+                  Icon(Icons.error_outline, size: 64, color: AppColors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    actionPlanProvider.errorMessage ?? 'No action plan available',
+                    style: AppTypography.bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(onPressed: _loadActionPlan, child: const Text('Retry')),
+                ],
+              ),
+            ),
+          );
+        }
+
+        final tasks = actionPlanProvider.actionPlan!.tasks;
+        final completedTasks = tasks.where((t) => t.isCompleted).length;
+        final pendingTasks = tasks.length - completedTasks;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Action Plan'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.download),
+                onPressed: () {
+                  // Download action plan
+                },
+              ),
+            ],
+          ),
+          body: RefreshIndicator(
+            onRefresh: _loadActionPlan,
+            child: Column(
+              children: [
+                // Header Stats
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: AppColors.primaryGradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildHeaderStat('${tasks.length}', 'Total Tasks', Icons.list_alt),
                       Container(width: 1, height: 40, color: AppColors.white.withOpacity(0.3)),
-                      _buildHeaderStat(
-                        '${tasks.where((t) => !t.isCompleted).length}',
-                        'Pending',
-                        Icons.pending_actions,
-                      ),
+                      _buildHeaderStat('$pendingTasks', 'Pending', Icons.pending_actions),
                       Container(width: 1, height: 40, color: AppColors.white.withOpacity(0.3)),
-                      _buildHeaderStat(
-                        '${tasks.where((t) => t.isCompleted).length}',
-                        'Completed',
-                        Icons.check_circle,
-                      ),
+                      _buildHeaderStat('$completedTasks', 'Completed', Icons.check_circle),
                     ],
                   ),
-                ],
-              ),
+                ),
+                // Tasks List
+                Expanded(child: _buildTasksList(context, tasks)),
+              ],
             ),
-
-            // Tabs Section
-            DefaultTabController(
-              length: 3,
-              child: Column(
-                children: [
-                  TabBar(
-                    labelColor: AppColors.primary,
-                    unselectedLabelColor: AppColors.neutral500,
-                    indicatorColor: AppColors.primary,
-                    tabs: const [
-                      Tab(text: 'Tasks'),
-                      Tab(text: '30-Day Plan'),
-                      Tab(text: '60-Day Plan'),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height - 300,
-                    child: TabBarView(
-                      children: [
-                        // Tasks Tab
-                        _buildTasksList(context, tasks),
-
-                        // 30-Day Plan Tab
-                        _buildPlanView(assessment.actionPlan30Day ?? 'No plan available'),
-
-                        // 60-Day Plan Tab
-                        _buildPlanView(assessment.actionPlan60Day ?? 'No plan available'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          context.push(RouteNames.generateLetter);
-        },
-        icon: const Icon(Icons.article),
-        label: const Text('Generate Letters'),
-      ),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () {
+              context.push(RouteNames.generateLetter);
+            },
+            icon: const Icon(Icons.article),
+            label: const Text('Generate Letters'),
+          ),
+        );
+      },
     );
   }
 
@@ -209,17 +219,6 @@ class ActionPlanScreen extends StatelessWidget {
         onTap: () {
           // Navigate to task details
         },
-      ),
-    );
-  }
-
-  Widget _buildPlanView(String content) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: AppWidgetStyles.elevatedCard,
-        child: Text(content, style: AppTypography.bodyMedium.copyWith(height: 1.6)),
       ),
     );
   }

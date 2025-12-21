@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../core/routes/route_names.dart';
 import '../../core/theme/theme.dart';
+import '../../state/auth_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -32,12 +34,23 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _controller.forward();
 
-    // Navigate to login after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        context.go(RouteNames.login);
-      }
-    });
+    // Check authentication state and navigate
+    _checkAuthAndNavigate();
+  }
+
+  Future<void> _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (!mounted) return;
+
+    final authProvider = context.read<AuthProvider>();
+
+    // Navigate based on authentication state
+    if (authProvider.isAuthenticated) {
+      context.go(RouteNames.main);
+    } else {
+      context.go(RouteNames.login);
+    }
   }
 
   @override

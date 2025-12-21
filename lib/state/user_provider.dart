@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import '../data/models/api_response.dart';
 import '../data/models/user_models.dart';
 import '../data/models/user.dart';
 import '../repo/user_repository.dart';
@@ -86,7 +85,8 @@ class UserProvider extends ChangeNotifier {
       );
 
       if (response.success && response.data != null) {
-        _user = response.data!.user;
+        // Refresh user profile to get updated image
+        await getUserProfile();
         _uploadProgress = 1.0;
         _setState(UserState.success);
         return true;

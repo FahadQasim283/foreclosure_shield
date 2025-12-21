@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../../core/theme/theme.dart';
+import '../../../state/document_provider.dart';
+import '../../../data/models/document_models.dart';
 
 class GenerateLetterScreen extends StatefulWidget {
   const GenerateLetterScreen({super.key});
@@ -11,7 +14,6 @@ class GenerateLetterScreen extends StatefulWidget {
 
 class _GenerateLetterScreenState extends State<GenerateLetterScreen> {
   String? _selectedLetterType;
-  bool _isGenerating = false;
 
   final List<Map<String, dynamic>> _letterTypes = [
     {
@@ -52,120 +54,134 @@ class _GenerateLetterScreenState extends State<GenerateLetterScreen> {
       return;
     }
 
-    setState(() => _isGenerating = true);
+    final documentProvider = Provider.of<DocumentProvider>(context, listen: false);
 
-    // Simulate AI generation
-    await Future.delayed(const Duration(seconds: 3));
+    final request = GenerateLetterRequest(
+      letterType: _selectedLetterType!,
+      recipientName: 'Lender Name',
+      recipientAddress: 'Lender Address',
+    );
+
+    final document = await documentProvider.generateLetter(request);
 
     if (mounted) {
-      setState(() => _isGenerating = false);
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Letter Generated', style: AppTypography.h3),
-          content: Text(
-            'Your letter has been generated successfully!',
-            style: AppTypography.bodyMedium,
+      if (document != null) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Letter Generated', style: AppTypography.h3),
+            content: Text(
+              'Your letter has been generated successfully!',
+              style: AppTypography.bodyMedium,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  context.pop();
+                },
+                child: const Text('Close'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Navigate to document details
+                  context.pop();
+                },
+                child: const Text('View Letter'),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                context.pop();
-              },
-              child: const Text('Close'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Navigate to preview
-              },
-              child: const Text('View Letter'),
-            ),
-          ],
-        ),
-      );
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(documentProvider.errorMessage ?? 'Failed to generate letter')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Generate Letter')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: AppColors.goldGradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  Icon(Icons.auto_awesome, size: 48, color: AppColors.white),
-                  const SizedBox(height: 12),
-                  Text(
-                    'AI-Powered Letter Generation',
-                    style: AppTypography.h3.copyWith(color: AppColors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Professional letters tailored to your situation',
-                    style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.white.withOpacity(0.9),
+    return Consumer<DocumentProvider>(
+      builder: (context, documentProvider, child) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Generate Letter')),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: AppColors.goldGradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    textAlign: TextAlign.center,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            // Letter Types
-            Text('Select Letter Type', style: AppTypography.h3),
-            const SizedBox(height: 16),
-
-            ..._letterTypes.map((letterType) => _buildLetterTypeCard(letterType)),
-
-            const SizedBox(height: 32),
-
-            // Generate Button
-            SizedBox(
-              height: 56,
-              child: ElevatedButton(
-                onPressed: _isGenerating ? null : _generateLetter,
-                child: _isGenerating
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.auto_awesome),
-                          const SizedBox(width: 8),
-                          Text('Generate with AI', style: AppTypography.buttonLarge),
-                        ],
+                  child: Column(
+                    children: [
+                      Icon(Icons.auto_awesome, size: 48, color: AppColors.white),
+                      const SizedBox(height: 12),
+                      Text(
+                        'AI-Powered Letter Generation',
+                        style: AppTypography.h3.copyWith(color: AppColors.white),
+                        textAlign: TextAlign.center,
                       ),
-              ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Professional letters tailored to your situation',
+                        style: AppTypography.bodySmall.copyWith(
+                          color: AppColors.white.withOpacity(0.9),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                // Letter Types
+                Text('Select Letter Type', style: AppTypography.h3),
+                const SizedBox(height: 16),
+
+                ..._letterTypes.map((letterType) => _buildLetterTypeCard(letterType)),
+
+                const SizedBox(height: 32),
+
+                // Generate Button
+                SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: documentProvider.isLoading ? null : _generateLetter,
+                    child: documentProvider.isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.auto_awesome),
+                              const SizedBox(width: 8),
+                              Text('Generate with AI', style: AppTypography.buttonLarge),
+                            ],
+                          ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
