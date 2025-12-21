@@ -2,7 +2,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   // Base URL - Update this with your backend server URL
-  static const String _baseUrl = "http://127.0.0.1:5000/v1";
+  static const String _baseUrl = "http://127.0.0.1:5000/api";
   static String get baseUrl => _baseUrl;
 
   // ===============================
@@ -19,26 +19,26 @@ class ApiEndpoints {
   // ===============================
   // USER PROFILE ENDPOINTS
   // ===============================
-  static const String userProfile = "/user/profile";
-  static const String updateProfile = "/user/profile";
-  static const String uploadProfileImage = "/user/profile/image";
+  static const String userProfile = "/users/profile";
+  static const String updateProfile = "/users/profile";
+  static const String uploadProfileImage = "/users/profile/image";
 
   // ===============================
   // ASSESSMENT ENDPOINTS
   // ===============================
-  static const String createAssessment = "/assessments";
-  static const String getAssessment = "/assessments"; // /{assessmentId}
-  static const String assessmentHistory = "/assessments/history";
-  static const String latestAssessment = "/assessments/latest";
+  static const String createAssessment = "/assessment";
+  static const String getAssessment = "/assessment"; // /{assessmentId}
+  static const String assessmentHistory = "/assessment/history";
+  static const String latestAssessment = "/assessment/latest";
 
   // ===============================
   // ACTION PLAN ENDPOINTS
   // ===============================
-  static const String actionPlan = "/action-plans";
-  static const String taskDetails = "/action-plans/tasks"; // /{taskId}
-  static const String updateTaskStatus = "/action-plans/tasks"; // /{taskId}/status
-  static const String updateTaskNotes = "/action-plans/tasks"; // /{taskId}/notes
-  static const String tasksByCategory = "/action-plans/tasks/category"; // /{category}
+  static const String actionPlan = "/action-plan";
+  static const String taskDetails = "/action-plan/tasks"; // /{taskId}
+  static const String updateTaskStatus = "/action-plan/tasks"; // /{taskId}/status
+  static const String updateTaskNotes = "/action-plan/tasks"; // /{taskId}/notes
+  static const String tasksByCategory = "/action-plan/tasks/category"; // /{category}
 
   // ===============================
   // DOCUMENT ENDPOINTS
@@ -55,8 +55,9 @@ class ApiEndpoints {
   // NOTIFICATION ENDPOINTS
   // ===============================
   static const String notifications = "/notifications";
+  static const String notificationUnreadCount = "/notifications/unread-count";
   static const String markNotificationRead = "/notifications"; // /{notificationId}/read
-  static const String markAllNotificationsRead = "/notifications/read-all";
+  static const String markAllRead = "/notifications/read-all";
   static const String deleteNotification = "/notifications"; // /{notificationId}
   static const String notificationSettings = "/notifications/settings";
   static const String updateNotificationSettings = "/notifications/settings";
@@ -74,6 +75,7 @@ class ApiEndpoints {
   // ===============================
   static const String faq = "/support/faq";
   static const String createTicket = "/support/tickets";
+  static const String supportTickets = "/support/tickets";
   static const String userTickets = "/support/tickets";
   static const String ticketDetails = "/support/tickets"; // /{ticketId}
   static const String addTicketMessage = "/support/tickets"; // /{ticketId}/messages
@@ -96,12 +98,12 @@ class ApiEndpoints {
   // ===============================
   // MISCELLANEOUS ENDPOINTS
   // ===============================
-  static const String appVersion = "/app/version";
-  static const String healthCheck = "/health";
+  static const String appVersion = "/misc/app/version";
+  static const String healthCheck = "/misc/health";
 
   // ===============================
   // DEVICE ENDPOINTS
   // ===============================
-  static const String registerDevice = "/devices/register";
-  static const String unregisterDevice = "/devices"; // /{deviceId}
+  static const String registerDevice = "/device/register";
+  static const String unregisterDevice = "/device"; // /{deviceId}
 }

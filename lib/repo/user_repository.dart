@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import '../services/network/api_client.dart';
 import '/core/constants/api_endpoints.dart';
 import '../services/local_storage/token_storage.dart';
-import '/data/models/user.dart';
 import '/data/models/api_response.dart';
 import '/data/models/user_models.dart';
 import 'package:flutter/material.dart' show debugPrint;
@@ -27,10 +26,7 @@ class UserRepository {
 
       if (response.data['success'] == true) {
         final userResponse = UserProfileResponse.fromJson(response.data['data']);
-        return ApiResponse.success(
-          userResponse,
-          message: response.data['message'] as String?,
-        );
+        return ApiResponse.success(userResponse, message: response.data['message'] as String?);
       }
 
       return ApiResponse.failure(
@@ -51,10 +47,7 @@ class UserRepository {
       );
     } catch (e) {
       debugPrint('Get user profile error: $e');
-      return ApiResponse.failure(
-        e.toString(),
-        error: ApiError(message: e.toString()),
-      );
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
@@ -71,17 +64,11 @@ class UserRepository {
         );
       }
 
-      final response = await _apiClient.put(
-        ApiEndpoints.updateProfile,
-        data: request.toJson(),
-      );
+      final response = await _apiClient.put(ApiEndpoints.updateProfile, data: request.toJson());
 
       if (response.data['success'] == true) {
         final updateResponse = UpdateProfileResponse.fromJson(response.data['data']);
-        return ApiResponse.success(
-          updateResponse,
-          message: response.data['message'] as String?,
-        );
+        return ApiResponse.success(updateResponse, message: response.data['message'] as String?);
       }
 
       return ApiResponse.failure(
@@ -102,17 +89,59 @@ class UserRepository {
       );
     } catch (e) {
       debugPrint('Update profile error: $e');
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
+    }
+  }
+
+  // ===============================
+  // UPDATE USER PROFILE
+  // ===============================
+  Future<ApiResponse<UpdateProfileResponse>> updateUserProfile(UpdateProfileRequest request) async {
+    try {
+      final token = await TokenStorage.getAccessToken();
+      if (token == null) {
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
+      }
+
+      final response = await _apiClient.put(ApiEndpoints.updateProfile, data: request.toJson());
+
+      if (response.data['success'] == true) {
+        final updateResponse = UpdateProfileResponse.fromJson(response.data['data']);
+        return ApiResponse.success(updateResponse, message: response.data['message'] as String?);
+      }
+
       return ApiResponse.failure(
-        e.toString(),
-        error: ApiError(message: e.toString()),
+        response.data['error']?['message'] ?? 'Failed to update profile',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Failed to update profile',
+          code: response.statusCode?.toString(),
+        ),
       );
+    } on DioException catch (e) {
+      debugPrint('Update profile error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update profile',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update profile',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
+    } catch (e) {
+      debugPrint('Update profile error: $e');
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
   // ===============================
   // UPLOAD PROFILE IMAGE
   // ===============================
-  Future<ApiResponse<UploadProfileImageResponse>> uploadProfileImage(String filePath) async {
+  Future<ApiResponse<UploadProfileImageResponse>> uploadProfileImage(
+    String filePath, {
+    Function(double)? onProgress,
+  }) async {
     try {
       final token = await TokenStorage.getAccessToken();
       if (token == null) {
@@ -124,17 +153,11 @@ class UserRepository {
 
       final formData = FormData.fromMap({'image': await MultipartFile.fromFile(filePath)});
 
-      final response = await _apiClient.post(
-        ApiEndpoints.uploadProfileImage,
-        data: formData,
-      );
+      final response = await _apiClient.post(ApiEndpoints.uploadProfileImage, data: formData);
 
       if (response.data['success'] == true) {
         final uploadResponse = UploadProfileImageResponse.fromJson(response.data['data']);
-        return ApiResponse.success(
-          uploadResponse,
-          message: response.data['message'] as String?,
-        );
+        return ApiResponse.success(uploadResponse, message: response.data['message'] as String?);
       }
 
       return ApiResponse.failure(
@@ -155,10 +178,7 @@ class UserRepository {
       );
     } catch (e) {
       debugPrint('Upload profile image error: $e');
-      return ApiResponse.failure(
-        e.toString(),
-        error: ApiError(message: e.toString()),
-      );
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 }

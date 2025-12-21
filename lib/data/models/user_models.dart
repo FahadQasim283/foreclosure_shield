@@ -1,5 +1,8 @@
 import '/data/models/user.dart';
 
+// Type alias for backward compatibility
+typedef UpdateUserProfileRequest = UpdateProfileRequest;
+
 // ===============================
 // USER REQUEST MODELS
 // ===============================

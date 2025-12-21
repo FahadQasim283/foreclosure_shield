@@ -33,6 +33,26 @@ class NotificationModel {
       data: json['data'] as Map<String, dynamic>?,
     );
   }
+
+  NotificationModel copyWith({
+    String? id,
+    String? title,
+    String? message,
+    String? type,
+    bool? isRead,
+    DateTime? createdAt,
+    Map<String, dynamic>? data,
+  }) {
+    return NotificationModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      message: message ?? this.message,
+      type: type ?? this.type,
+      isRead: isRead ?? this.isRead,
+      createdAt: createdAt ?? this.createdAt,
+      data: data ?? this.data,
+    );
+  }
 }
 
 // ===============================

@@ -21,7 +21,10 @@ class AuthRepository {
         final authResponse = AuthResponse.fromJson(response.data['data']);
 
         // Save tokens
-        await TokenStorage.saveTokens(authResponse.token, authResponse.refreshToken);
+        await TokenStorage.saveTokens(
+          accessToken: authResponse.token,
+          refreshToken: authResponse.refreshToken,
+        );
 
         return ApiResponse.success(authResponse, message: response.data['message'] as String?);
       }
@@ -59,7 +62,10 @@ class AuthRepository {
         final authResponse = AuthResponse.fromJson(response.data['data']);
 
         // Save tokens
-        await TokenStorage.saveTokens(authResponse.token, authResponse.refreshToken);
+        await TokenStorage.saveTokens(
+          accessToken: authResponse.token,
+          refreshToken: authResponse.refreshToken,
+        );
 
         return ApiResponse.success(authResponse, message: response.data['message'] as String?);
       }
@@ -210,7 +216,10 @@ class AuthRepository {
         final refreshResponse = RefreshTokenResponse.fromJson(response.data['data']);
 
         // Save new tokens
-        await TokenStorage.saveTokens(refreshResponse.token, refreshResponse.refreshToken);
+        await TokenStorage.saveTokens(
+          accessToken: refreshResponse.token,
+          refreshToken: refreshResponse.refreshToken,
+        );
 
         return ApiResponse.success(refreshResponse, message: response.data['message'] as String?);
       }

@@ -3,7 +3,6 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '/core/constants/api_endpoints.dart';
 import '../local_storage/token_storage.dart';
 
-
 class ApiClient {
   late final Dio _dio;
 
@@ -44,14 +43,12 @@ class ApiClient {
     }
     if (response.data['success']) {
       // NotificationWidgets.showSuccessSnackBar(response.data['message']);
-    } else {
-    }
+    } else {}
 
     handler.next(response);
   }
 
   Future<void> _onError(DioException err, ErrorInterceptorHandler handler) async {
-
     if (err.response?.statusCode == 401) {
       await TokenStorage.clearAll();
     }
@@ -63,7 +60,8 @@ class ApiClient {
     handler.next(err);
   }
 
-
+  // Expose dio instance for advanced operations like downloads
+  Dio get dio => _dio;
 
   Future<Response> get(String endpoint, {Map<String, dynamic>? queryParams}) {
     //requesting

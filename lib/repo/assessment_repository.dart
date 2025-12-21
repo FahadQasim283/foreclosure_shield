@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import '../services/network/api_client.dart';
 import '/core/constants/api_endpoints.dart';
 import '../services/local_storage/token_storage.dart';
-import '/data/models/risk_assessment.dart';
 import '/data/models/api_response.dart';
 import '/data/models/assessment_models.dart';
 import 'package:flutter/material.dart' show debugPrint;
@@ -23,10 +22,7 @@ class AssessmentRepository {
         );
       }
 
-      final response = await _apiClient.post(
-        ApiEndpoints.createAssessment,
-        data: request.toJson(),
-      );
+      final response = await _apiClient.post(ApiEndpoints.createAssessment, data: request.toJson());
 
       if (response.data['success'] == true) {
         final assessmentResponse = AssessmentResponse.fromJson(response.data['data']);
@@ -48,16 +44,14 @@ class AssessmentRepository {
       return ApiResponse.failure(
         e.response?.data['error']?['message'] ?? e.message ?? 'Assessment creation failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Assessment creation failed',
+          message:
+              e.response?.data['error']?['message'] ?? e.message ?? 'Assessment creation failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
     } catch (e) {
       debugPrint('Create assessment error: $e');
-      return ApiResponse.failure(
-        e.toString(),
-        error: ApiError(message: e.toString()),
-      );
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
@@ -96,16 +90,14 @@ class AssessmentRepository {
       return ApiResponse.failure(
         e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch assessment',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch assessment',
+          message:
+              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch assessment',
           code: e.response?.statusCode?.toString(),
         ),
       );
     } catch (e) {
       debugPrint('Get assessment error: $e');
-      return ApiResponse.failure(
-        e.toString(),
-        error: ApiError(message: e.toString()),
-      );
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
@@ -133,10 +125,7 @@ class AssessmentRepository {
 
       if (response.data['success'] == true) {
         final historyResponse = AssessmentHistoryResponse.fromJson(response.data['data']);
-        return ApiResponse.success(
-          historyResponse,
-          message: response.data['message'] as String?,
-        );
+        return ApiResponse.success(historyResponse, message: response.data['message'] as String?);
       }
 
       return ApiResponse.failure(
@@ -151,16 +140,16 @@ class AssessmentRepository {
       return ApiResponse.failure(
         e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch assessment history',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch assessment history',
+          message:
+              e.response?.data['error']?['message'] ??
+              e.message ??
+              'Failed to fetch assessment history',
           code: e.response?.statusCode?.toString(),
         ),
       );
     } catch (e) {
       debugPrint('Get assessment history error: $e');
-      return ApiResponse.failure(
-        e.toString(),
-        error: ApiError(message: e.toString()),
-      );
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 
@@ -181,10 +170,7 @@ class AssessmentRepository {
 
       if (response.data['success'] == true) {
         final latestResponse = LatestAssessmentResponse.fromJson(response.data['data']);
-        return ApiResponse.success(
-          latestResponse,
-          message: response.data['message'] as String?,
-        );
+        return ApiResponse.success(latestResponse, message: response.data['message'] as String?);
       }
 
       return ApiResponse.failure(
@@ -199,16 +185,16 @@ class AssessmentRepository {
       return ApiResponse.failure(
         e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch latest assessment',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch latest assessment',
+          message:
+              e.response?.data['error']?['message'] ??
+              e.message ??
+              'Failed to fetch latest assessment',
           code: e.response?.statusCode?.toString(),
         ),
       );
     } catch (e) {
       debugPrint('Get latest assessment error: $e');
-      return ApiResponse.failure(
-        e.toString(),
-        error: ApiError(message: e.toString()),
-      );
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
 }

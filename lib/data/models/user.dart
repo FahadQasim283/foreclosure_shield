@@ -31,7 +31,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as String,
+      id: json['id'].toString(),
       email: json['email'] as String,
       name: json['name'] as String,
       phone: json['phone'] as String?,
@@ -44,8 +44,12 @@ class User {
       subscriptionExpiryDate: json['subscriptionExpiryDate'] != null
           ? DateTime.parse(json['subscriptionExpiryDate'] as String)
           : null,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : DateTime.now(),
     );
   }
 

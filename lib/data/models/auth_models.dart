@@ -97,15 +97,15 @@ class RefreshTokenRequest {
 // ===============================
 
 class AuthResponse {
-  final User user;
+  final User? user;
   final String token;
   final String refreshToken;
 
-  AuthResponse({required this.user, required this.token, required this.refreshToken});
+  AuthResponse({this.user, required this.token, required this.refreshToken});
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
     return AuthResponse(
-      user: User.fromJson(json['user']),
+      user: json['user'] != null ? User.fromJson(json['user']) : null,
       token: json['token'] as String,
       refreshToken: json['refreshToken'] as String,
     );

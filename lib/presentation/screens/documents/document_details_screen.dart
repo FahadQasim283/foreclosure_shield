@@ -146,7 +146,7 @@ class DocumentDetailsScreen extends StatelessWidget {
                     Text('Generated Content', style: AppTypography.h3),
                     const SizedBox(height: 8),
                     Text(
-                      document.generatedContent!.substring(0, 200) + '...',
+                      '${document.generatedContent!.substring(0, 200)}...',
                       style: AppTypography.bodyMedium,
                     ),
                   ],

@@ -84,6 +84,30 @@ class UserSubscription {
       autoRenew: json['autoRenew'] as bool,
     );
   }
+
+  UserSubscription copyWith({
+    String? id,
+    String? planId,
+    String? planName,
+    String? status,
+    DateTime? startDate,
+    DateTime? expiryDate,
+    String? billingCycle,
+    double? amount,
+    bool? autoRenew,
+  }) {
+    return UserSubscription(
+      id: id ?? this.id,
+      planId: planId ?? this.planId,
+      planName: planName ?? this.planName,
+      status: status ?? this.status,
+      startDate: startDate ?? this.startDate,
+      expiryDate: expiryDate ?? this.expiryDate,
+      billingCycle: billingCycle ?? this.billingCycle,
+      amount: amount ?? this.amount,
+      autoRenew: autoRenew ?? this.autoRenew,
+    );
+  }
 }
 
 // ===============================

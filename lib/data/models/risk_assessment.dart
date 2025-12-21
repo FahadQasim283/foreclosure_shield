@@ -72,27 +72,45 @@ class RiskAssessment {
   });
 
   factory RiskAssessment.fromJson(Map<String, dynamic> json) {
+    // Handle both backend response format (camelCase) and legacy format (snake_case)
     return RiskAssessment(
-      id: json['id'] as String,
-      userId: json['user_id'] as String,
-      riskScore: json['risk_score'] as int,
-      riskCategory: json['risk_category'] as String,
-      assessmentDate: DateTime.parse(json['assessment_date'] as String),
+      id: (json['id'] ?? json['id']).toString(),
+      userId: (json['userId'] ?? json['user_id'] ?? '').toString(),
+      riskScore: (json['riskScore'] ?? json['risk_score'] ?? 0) as int,
+      riskCategory:
+          (json['riskCategory'] ?? json['riskLevel'] ?? json['risk_category'] ?? 'SECURE')
+              as String,
+      assessmentDate: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : (json['assessment_date'] != null
+                ? DateTime.parse(json['assessment_date'] as String)
+                : DateTime.now()),
       auctionDate: json['auction_date'] != null
           ? DateTime.parse(json['auction_date'] as String)
           : null,
       daysToAuction: json['days_to_auction'] as int?,
-      amountOwed: (json['amount_owed'] as num?)?.toDouble(),
-      propertyValue: (json['property_value'] as num?)?.toDouble(),
-      missedPayments: json['missed_payments'] as int?,
+      // Extract from financialData if present, otherwise use direct fields
+      amountOwed: json['financialData'] != null
+          ? (json['financialData']['amountOwed'] as num?)?.toDouble()
+          : (json['amount_owed'] as num?)?.toDouble(),
+      propertyValue: json['financialData'] != null
+          ? (json['financialData']['propertyValue'] as num?)?.toDouble()
+          : (json['property_value'] as num?)?.toDouble(),
+      missedPayments: json['financialData'] != null
+          ? json['financialData']['missedPayments'] as int?
+          : json['missed_payments'] as int?,
+      monthlyIncome: json['financialData'] != null
+          ? (json['financialData']['monthlyIncome'] as num?)?.toDouble()
+          : (json['monthly_income'] as num?)?.toDouble(),
+      monthlyExpenses: json['financialData'] != null
+          ? (json['financialData']['monthlyExpenses'] as num?)?.toDouble()
+          : (json['monthly_expenses'] as num?)?.toDouble(),
       lenderName: json['lender_name'] as String?,
       lenderPhone: json['lender_phone'] as String?,
       propertyAddress: json['property_address'] as String?,
       propertyCity: json['property_city'] as String?,
       propertyState: json['property_state'] as String?,
       propertyZip: json['property_zip'] as String?,
-      monthlyIncome: (json['monthly_income'] as num?)?.toDouble(),
-      monthlyExpenses: (json['monthly_expenses'] as num?)?.toDouble(),
       hasOtherDebts: json['has_other_debts'] as bool?,
       otherDebtsAmount: (json['other_debts_amount'] as num?)?.toDouble(),
       legalStatus: json['legal_status'] as String?,
