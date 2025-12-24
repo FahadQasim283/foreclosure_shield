@@ -62,8 +62,8 @@ class _SignupScreenState extends State<SignupScreen> {
       setState(() => _isLoading = false);
 
       if (success) {
-        // Navigate to verify OTP screen with email
-        context.push('${RouteNames.verifyOtp}?email=${Uri.encodeComponent(_emailController.text)}');
+        // Navigate to main screen (skip OTP verification for now)
+        context.go(RouteNames.main);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
