@@ -2,7 +2,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   // Base URL - Update this with your backend server URL
-  static const String _baseUrl = "http://127.0.0.1:5000/api";
+  static const String _baseUrl = "https://foreclosure-shield-backend.onrender.com/api";
   static String get baseUrl => _baseUrl;
 
   // ===============================
