@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 import '/core/theme/app_colors.dart';
 import '/core/theme/app_typography.dart';
 import '/data/mock_data.dart';
@@ -24,13 +26,13 @@ class DocumentDetailsScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              // Share document
+              _shareDocument(context, document);
             },
           ),
           IconButton(
             icon: const Icon(Icons.download),
             onPressed: () {
-              // Download document
+              _downloadDocument(context, document);
             },
           ),
           PopupMenuButton(
@@ -196,7 +198,7 @@ class DocumentDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            // View full document
+                            _showFullContentDialog(context, document);
                           },
                           icon: const Icon(Icons.visibility),
                           label: const Text('View Full'),
@@ -209,7 +211,7 @@ class DocumentDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () {
-                            // Download document
+                            _downloadDocument(context, document);
                           },
                           icon: const Icon(Icons.download),
                           label: const Text('Download'),
@@ -308,6 +310,86 @@ class DocumentDetailsScreen extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     return '${date.month}/${date.day}/${date.year}';
+  }
+
+  void _showFullContentDialog(BuildContext context, document) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(document.title),
+        content: SingleChildScrollView(
+          child: Text(
+            document.generatedContent ?? 'No content available',
+            style: AppTypography.bodyMedium,
+          ),
+        ),
+        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
+      ),
+    );
+  }
+
+  void _shareDocument(BuildContext context, document) async {
+    String shareText = 'Document: ${document.title}\nType: ${document.documentType}';
+
+    if (document.generatedContent != null && document.generatedContent!.isNotEmpty) {
+      shareText += '\n\nContent:\n${document.generatedContent}';
+    }
+
+    if (document.fileUrl != null && document.fileUrl!.isNotEmpty) {
+      shareText += '\n\nDownload Link: ${document.fileUrl}';
+    }
+
+    try {
+      await Share.share(shareText, subject: 'Shared Document: ${document.title}');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sharing document: $e'), duration: const Duration(seconds: 2)),
+      );
+    }
+  }
+
+  void _downloadDocument(BuildContext context, document) async {
+    if (document.fileUrl != null && document.fileUrl!.isNotEmpty) {
+      final Uri url = Uri.parse(document.fileUrl!);
+      try {
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Opening document...'), duration: Duration(seconds: 2)),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open document URL'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening document: $e'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } else if (document.generatedContent != null && document.generatedContent!.isNotEmpty) {
+      // For generated content without a file URL, share the content
+      _shareDocument(context, document);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Document shared. Use share options to save or send.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No downloadable content available'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   void _showDeleteDialog(BuildContext context) {
