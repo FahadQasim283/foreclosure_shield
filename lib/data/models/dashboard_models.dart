@@ -50,7 +50,7 @@ class RiskSummary {
   factory RiskSummary.fromJson(Map<String, dynamic> json) {
     return RiskSummary(
       currentRiskLevel: json['level'] as String,
-      riskScore: (json['score'] as num).toDouble(),
+      riskScore: double.parse(json['score'].toString()),
       totalAssessments: json['hasAssessment'] == true ? 1 : 0,
       lastAssessmentDate: json['lastUpdated'] != null
           ? DateTime.parse(json['lastUpdated'] as String)
@@ -78,14 +78,14 @@ class TasksSummary {
   });
 
   factory TasksSummary.fromJson(Map<String, dynamic> json) {
-    final totalTasks = json['totalTasks'] as int;
-    final completedTasks = json['completedTasks'] as int;
+    final totalTasks = int.parse(json['totalTasks'].toString());
+    final completedTasks = int.parse(json['completedTasks'].toString());
     return TasksSummary(
       totalTasks: totalTasks,
       completedTasks: completedTasks,
       pendingTasks: totalTasks - completedTasks,
       highPriorityTasks: 0, // Not provided in API
-      completionPercentage: (json['progress'] as num).toDouble(),
+      completionPercentage: double.parse(json['progress'].toString()),
     );
   }
 }
@@ -107,7 +107,7 @@ class DocumentsSummary {
   });
 
   factory DocumentsSummary.fromJson(Map<String, dynamic> json) {
-    final totalCount = json['totalCount'] as int;
+    final totalCount = int.parse(json['totalCount'].toString());
     return DocumentsSummary(
       totalDocuments: totalCount,
       generatedLetters: 0, // Not provided
@@ -138,7 +138,7 @@ class SubscriptionInfo {
       planName: json['planName'] as String,
       status: json['status'] as String,
       expiryDate: json['expiryDate'] != null ? DateTime.parse(json['expiryDate'] as String) : null,
-      daysRemaining: json['daysRemaining'] as int,
+      daysRemaining: int.parse(json['daysRemaining'].toString()),
     );
   }
 }
@@ -168,8 +168,8 @@ class RecentActivity {
       id: json['id'] as String,
       type: json['type'] as String,
       title: json['title'] as String,
-      description: json['description'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String),
+      description: json['description'] ?? '', // Default to empty if not provided
+      timestamp: DateTime.parse(json['createdAt'] as String),
       icon: json['icon'] as String?,
     );
   }
@@ -222,9 +222,9 @@ class MonthlyProgress {
   factory MonthlyProgress.fromJson(Map<String, dynamic> json) {
     return MonthlyProgress(
       month: json['month'] as String,
-      assessments: json['assessments'] as int,
-      completedTasks: json['completedTasks'] as int,
-      documents: json['documents'] as int,
+      assessments: int.parse(json['assessments'].toString()),
+      completedTasks: int.parse(json['completedTasks'].toString()),
+      documents: int.parse(json['documents'].toString()),
     );
   }
 }
