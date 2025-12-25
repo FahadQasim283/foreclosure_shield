@@ -120,90 +120,92 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
           appBar: AppBar(title: const Text('Upload Document')),
           body: Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Select Document Type', style: AppTypography.h2),
-                const SizedBox(height: 16),
-                ..._documentTypes.entries.map(
-                  (entry) => _buildDocumentTypeCard(
-                    entry.key,
-                    entry.value['title'],
-                    entry.value['description'],
-                    entry.value['icon'],
-                    entry.value['color'],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: 'Document Title',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: documentProvider.isLoading ? null : _pickFile,
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: _selectedFilePath != null ? AppColors.green : AppColors.primary,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      color: _selectedFilePath != null ? AppColors.green.withOpacity(0.1) : null,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Select Document Type', style: AppTypography.h2),
+                  const SizedBox(height: 16),
+                  ..._documentTypes.entries.map(
+                    (entry) => _buildDocumentTypeCard(
+                      entry.key,
+                      entry.value['title'],
+                      entry.value['description'],
+                      entry.value['icon'],
+                      entry.value['color'],
                     ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          _selectedFilePath != null ? Icons.check_circle : Icons.cloud_upload,
-                          size: 60,
+                  ),
+                  const SizedBox(height: 24),
+                  TextField(
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      labelText: 'Document Title',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: documentProvider.isLoading ? null : _pickFile,
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        border: Border.all(
                           color: _selectedFilePath != null ? AppColors.green : AppColors.primary,
+                          width: 2,
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          _selectedFileName ?? 'Drop files here or click to browse',
-                          style: AppTypography.bodyLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Supported formats: PDF, JPG, PNG, DOCX',
-                          style: AppTypography.bodySmall.copyWith(color: AppColors.neutral600),
-                        ),
-                        if (documentProvider.isLoading && documentProvider.uploadProgress > 0) ...[
+                        borderRadius: BorderRadius.circular(12),
+                        color: _selectedFilePath != null ? AppColors.green.withOpacity(0.1) : null,
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            _selectedFilePath != null ? Icons.check_circle : Icons.cloud_upload,
+                            size: 60,
+                            color: _selectedFilePath != null ? AppColors.green : AppColors.primary,
+                          ),
                           const SizedBox(height: 16),
-                          LinearProgressIndicator(value: documentProvider.uploadProgress),
+                          Text(
+                            _selectedFileName ?? 'Drop files here or click to browse',
+                            style: AppTypography.bodyLarge,
+                            textAlign: TextAlign.center,
+                          ),
                           const SizedBox(height: 8),
                           Text(
-                            '${(documentProvider.uploadProgress * 100).toInt()}%',
-                            style: AppTypography.bodySmall,
+                            'Supported formats: PDF, JPG, PNG, DOCX',
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.neutral600),
                           ),
+                          if (documentProvider.isLoading &&
+                              documentProvider.uploadProgress > 0) ...[
+                            const SizedBox(height: 16),
+                            LinearProgressIndicator(value: documentProvider.uploadProgress),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${(documentProvider.uploadProgress * 100).toInt()}%',
+                              style: AppTypography.bodySmall,
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: documentProvider.isLoading ? null : _uploadDocument,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: documentProvider.isLoading ? null : _uploadDocument,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: documentProvider.isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Upload Document'),
                     ),
-                    child: documentProvider.isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Upload Document'),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

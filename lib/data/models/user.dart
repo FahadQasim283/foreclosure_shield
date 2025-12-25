@@ -1,5 +1,5 @@
 class User {
-  final String id;
+  final String? id;
   final String email;
   final String name;
   final String? phone;
@@ -14,7 +14,7 @@ class User {
   final DateTime updatedAt;
 
   User({
-    required this.id,
+    this.id,
     required this.email,
     required this.name,
     this.phone,
@@ -31,10 +31,10 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'].toString(),
+      id: json['id']?.toString(),
       email: json['email'] as String,
       name: json['name'] as String,
-      phone: json['phone'] as String?,
+      phone: json['phone']?.toString(),
       profileImage: json['profileImage'] as String?,
       propertyAddress: json['propertyAddress'] as String?,
       city: json['city'] as String?,
@@ -44,11 +44,11 @@ class User {
       subscriptionExpiryDate: json['subscriptionExpiryDate'] != null
           ? DateTime.parse(json['subscriptionExpiryDate'] as String)
           : null,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
           : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
           : DateTime.now(),
     );
   }

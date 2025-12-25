@@ -5,13 +5,12 @@ class TokenStorage {
   static const String _refreshTokenKey = 'refresh_token';
 
   // Save tokens
-  static Future<void> saveTokens({
-    required String accessToken,
-    required String refreshToken,
-  }) async {
+  static Future<void> saveTokens({required String accessToken, String? refreshToken}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_accessTokenKey, accessToken);
-    await prefs.setString(_refreshTokenKey, refreshToken);
+    if (refreshToken != null) {
+      await prefs.setString(_refreshTokenKey, refreshToken);
+    }
   }
 
   // Get access token

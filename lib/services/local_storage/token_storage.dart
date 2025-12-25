@@ -6,12 +6,11 @@ class TokenStorage {
   static const String _userDataKey = 'user_data';
   static const _storage = FlutterSecureStorage();
 
-  static Future<void> saveTokens({
-    required String accessToken,
-    required String refreshToken,
-  }) async {
+  static Future<void> saveTokens({required String accessToken, String? refreshToken}) async {
     await _storage.write(key: _accessTokenKey, value: accessToken);
-    await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    if (refreshToken != null) {
+      await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    }
   }
 
   static Future<String?> getAccessToken() async {

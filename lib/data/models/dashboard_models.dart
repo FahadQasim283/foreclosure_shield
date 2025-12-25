@@ -18,11 +18,13 @@ class DashboardSummary {
 
   factory DashboardSummary.fromJson(Map<String, dynamic> json) {
     return DashboardSummary(
-      riskSummary: RiskSummary.fromJson(json['riskSummary']),
-      tasksSummary: TasksSummary.fromJson(json['tasksSummary']),
-      documentsSummary: DocumentsSummary.fromJson(json['documentsSummary']),
-      subscriptionInfo: SubscriptionInfo.fromJson(json['subscriptionInfo']),
-      recentActivities: (json['recentActivities'] as List)
+      riskSummary: RiskSummary.fromJson(json['riskAssessment']),
+      tasksSummary: TasksSummary.fromJson(json['actionPlan']),
+      documentsSummary: DocumentsSummary.fromJson(json['documents']),
+      subscriptionInfo: json['user']['subscription'] != null
+          ? SubscriptionInfo.fromJson(json['user']['subscription'])
+          : SubscriptionInfo(planName: 'Free', status: 'inactive', daysRemaining: 0),
+      recentActivities: (json['notifications']['recent'] as List)
           .map((e) => RecentActivity.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
@@ -47,11 +49,11 @@ class RiskSummary {
 
   factory RiskSummary.fromJson(Map<String, dynamic> json) {
     return RiskSummary(
-      currentRiskLevel: json['currentRiskLevel'] as String,
-      riskScore: (json['riskScore'] as num).toDouble(),
-      totalAssessments: json['totalAssessments'] as int,
-      lastAssessmentDate: json['lastAssessmentDate'] != null
-          ? DateTime.parse(json['lastAssessmentDate'] as String)
+      currentRiskLevel: json['level'] as String,
+      riskScore: (json['score'] as num).toDouble(),
+      totalAssessments: json['hasAssessment'] == true ? 1 : 0,
+      lastAssessmentDate: json['lastUpdated'] != null
+          ? DateTime.parse(json['lastUpdated'] as String)
           : null,
     );
   }
@@ -76,12 +78,14 @@ class TasksSummary {
   });
 
   factory TasksSummary.fromJson(Map<String, dynamic> json) {
+    final totalTasks = json['totalTasks'] as int;
+    final completedTasks = json['completedTasks'] as int;
     return TasksSummary(
-      totalTasks: json['totalTasks'] as int,
-      completedTasks: json['completedTasks'] as int,
-      pendingTasks: json['pendingTasks'] as int,
-      highPriorityTasks: json['highPriorityTasks'] as int,
-      completionPercentage: (json['completionPercentage'] as num).toDouble(),
+      totalTasks: totalTasks,
+      completedTasks: completedTasks,
+      pendingTasks: totalTasks - completedTasks,
+      highPriorityTasks: 0, // Not provided in API
+      completionPercentage: (json['progress'] as num).toDouble(),
     );
   }
 }
@@ -103,13 +107,12 @@ class DocumentsSummary {
   });
 
   factory DocumentsSummary.fromJson(Map<String, dynamic> json) {
+    final totalCount = json['totalCount'] as int;
     return DocumentsSummary(
-      totalDocuments: json['totalDocuments'] as int,
-      generatedLetters: json['generatedLetters'] as int,
-      uploadedDocuments: json['uploadedDocuments'] as int,
-      lastUploadDate: json['lastUploadDate'] != null
-          ? DateTime.parse(json['lastUploadDate'] as String)
-          : null,
+      totalDocuments: totalCount,
+      generatedLetters: 0, // Not provided
+      uploadedDocuments: totalCount,
+      lastUploadDate: null, // Not provided
     );
   }
 }
