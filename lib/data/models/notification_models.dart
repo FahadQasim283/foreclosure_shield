@@ -1,6 +1,25 @@
 import '/data/models/api_response.dart';
 
 // ===============================
+// PAGINATION MODEL
+// ===============================
+class Pagination {
+  final int currentPage;
+  final int totalPages;
+  final int totalItems;
+
+  Pagination({required this.currentPage, required this.totalPages, required this.totalItems});
+
+  factory Pagination.fromJson(Map<String, dynamic> json) {
+    return Pagination(
+      currentPage: int.parse(json['currentPage'].toString()),
+      totalPages: int.parse(json['totalPages'].toString()),
+      totalItems: int.parse(json['totalItems'].toString()),
+    );
+  }
+}
+
+// ===============================
 // NOTIFICATION MODEL
 // ===============================
 class NotificationModel {
@@ -24,11 +43,11 @@ class NotificationModel {
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
-      id: json['id'] as String,
+      id: json['id'] ?? '',
       title: json['title'] as String,
       message: json['message'] as String,
       type: json['type'] as String,
-      isRead: json['isRead'] as bool,
+      isRead: json['isRead'] == 'true',
       createdAt: DateTime.parse(json['createdAt'] as String),
       data: json['data'] as Map<String, dynamic>?,
     );
