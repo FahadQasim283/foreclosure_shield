@@ -41,9 +41,9 @@ class ActionPlanProgress {
 
   factory ActionPlanProgress.fromJson(Map<String, dynamic> json) {
     return ActionPlanProgress(
-      totalTasks: json['totalTasks'] as int,
-      completedTasks: json['completedTasks'] as int,
-      percentage: (json['percentage'] as num).toDouble(),
+      totalTasks: int.parse(json['totalTasks'].toString()),
+      completedTasks: int.parse(json['completedTasks'].toString()),
+      percentage: double.parse(json['percentage'].toString()),
     );
   }
 }
@@ -57,7 +57,7 @@ class ActionPlanResponse {
 
   factory ActionPlanResponse.fromJson(Map<String, dynamic> json) {
     return ActionPlanResponse(
-      actionPlanId: json['id'] as String,
+      actionPlanId: json['id'] ?? '',
       tasks: (json['tasks'] as List)
           .map((e) => ActionTask.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -91,8 +91,8 @@ class UpdateTaskStatusResponse {
 
   factory UpdateTaskStatusResponse.fromJson(Map<String, dynamic> json) {
     return UpdateTaskStatusResponse(
-      id: json['id'] as String,
-      isCompleted: json['isCompleted'] as bool,
+      id: json['id'] ?? '',
+      isCompleted: json['isCompleted'] == 'true',
       completedDate: json['completedDate'] != null
           ? DateTime.parse(json['completedDate'] as String)
           : null,
