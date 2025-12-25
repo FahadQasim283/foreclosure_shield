@@ -22,8 +22,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   Future<void> _loadDocuments() async {
-    // Documents are loaded and managed by DocumentProvider automatically
-    // The documents getter returns the current list
+    final documentProvider = Provider.of<DocumentProvider>(context, listen: false);
+    await documentProvider.listDocuments();
   }
 
   @override
