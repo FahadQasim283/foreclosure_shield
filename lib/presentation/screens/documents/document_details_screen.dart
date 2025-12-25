@@ -24,12 +24,6 @@ class DocumentDetailsScreen extends StatelessWidget {
         title: const Text('Document Details'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {
-              _shareDocument(context, document);
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.download),
             onPressed: () {
               _downloadDocument(context, document);
@@ -211,10 +205,10 @@ class DocumentDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () {
-                            _downloadDocument(context, document);
+                            _shareDocument(context, document);
                           },
-                          icon: const Icon(Icons.download),
-                          label: const Text('Download'),
+                          icon: const Icon(Icons.share),
+                          label: const Text('Share'),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
