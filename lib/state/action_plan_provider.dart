@@ -201,29 +201,9 @@ class ActionPlanProvider extends ChangeNotifier {
     }
   }
 
-  // Get Tasks by Category
-  Future<bool> getTasksByCategory(String category) async {
-    _setState(ActionPlanState.loading);
-    _errorMessage = null;
-
-    try {
-      final response = await _actionPlanRepository.getTasksByCategory(category);
-
-      if (response.success && response.data != null) {
-        _tasksByCategory = response.data!.tasks;
-        _setState(ActionPlanState.success);
-        return true;
-      } else {
-        _errorMessage = response.error?.message ?? 'Failed to fetch tasks';
-        _setState(ActionPlanState.error);
-        return false;
-      }
-    } catch (e) {
-      _errorMessage = e.toString();
-      _setState(ActionPlanState.error);
-      return false;
-    }
-  }
+  // Get Tasks by Category - Removed from API
+  // Note: Filter tasks by category locally instead
+  // Use getTasksByPriority() or filter _actionPlan.tasks manually
 
   // Get tasks by priority
   List<ActionTask> getTasksByPriority(String priority) {

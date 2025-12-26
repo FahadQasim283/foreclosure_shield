@@ -22,7 +22,7 @@ class DashboardRepository {
         );
       }
 
-      final response = await _apiClient.get(ApiEndpoints.dashboard);
+      final response = await _apiClient.get(ApiEndpoints.dashboardSummary);
 
       if (response.data['success'] == true) {
         final dashboardResponse = DashboardSummaryResponse.fromJson(response.data['data']);

@@ -1,5 +1,3 @@
-import '/data/models/api_response.dart';
-
 // ===============================
 // PAGINATION MODEL
 // ===============================

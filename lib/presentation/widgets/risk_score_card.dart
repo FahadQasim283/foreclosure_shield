@@ -5,11 +5,7 @@ class RiskScoreCard extends StatelessWidget {
   final int riskScore;
   final String riskLevel;
 
-  const RiskScoreCard({
-    super.key,
-    required this.riskScore,
-    required this.riskLevel,
-  });
+  const RiskScoreCard({super.key, required this.riskScore, required this.riskLevel});
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +25,7 @@ class RiskScoreCard extends StatelessWidget {
                 children: [
                   Text('Risk Assessment', style: AppTypography.h4),
                   const SizedBox(height: 4),
-                  Text(
-                    'Current Risk Level',
-                    style: AppTypography.caption,
-                  ),
+                  Text('Current Risk Level', style: AppTypography.caption),
                 ],
               ),
               Container(
@@ -100,29 +93,3 @@ class RiskScoreCard extends StatelessWidget {
     }
   }
 }
-
-
-  Widget _buildStat(String label, String value, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, size: 20, color: AppColors.primary),
-        const SizedBox(height: 4),
-        Text(value, style: AppTypography.h4),
-        const SizedBox(height: 2),
-        Text(label, style: AppTypography.caption, textAlign: TextAlign.center),
-      ],
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  String _formatCurrency(double amount) {
-    if (amount >= 1000000) {
-      return '${(amount / 1000000).toStringAsFixed(1)}M';
-    } else if (amount >= 1000) {
-      return '${(amount / 1000).toStringAsFixed(0)}K';
-    }
-    return amount.toStringAsFixed(0);
-  }

@@ -22,7 +22,7 @@ class DocumentRepository {
         );
       }
 
-      final response = await _apiClient.post(ApiEndpoints.generateLetter, data: request.toJson());
+      final response = await _apiClient.post(ApiEndpoints.generateDocument, data: request.toJson());
 
       if (response.data['success'] == true) {
         final documentResponse = DocumentResponse.fromJson(response.data['data']);
@@ -233,7 +233,7 @@ class DocumentRepository {
         );
       }
 
-      final response = await _apiClient.get('${ApiEndpoints.getDocument}/$documentId');
+      final response = await _apiClient.get(ApiEndpoints.getDocument(documentId));
 
       if (response.data['success'] == true) {
         final documentResponse = DocumentResponse.fromJson(response.data['data']);
@@ -287,7 +287,7 @@ class DocumentRepository {
       }
 
       await _apiClient.dio.download(
-        '${ApiEndpoints.downloadDocument}/$documentId/download',
+        ApiEndpoints.downloadDocument(documentId),
         savePath,
         onReceiveProgress: (received, total) {
           if (total != -1 && onProgress != null) {
@@ -327,7 +327,7 @@ class DocumentRepository {
         );
       }
 
-      final response = await _apiClient.delete('${ApiEndpoints.deleteDocument}/$documentId');
+      final response = await _apiClient.delete(ApiEndpoints.deleteDocument(documentId));
 
       if (response.data['success'] == true) {
         return ApiResponse.success(
@@ -376,7 +376,7 @@ class DocumentRepository {
       }
 
       final response = await _apiClient.post(
-        '${ApiEndpoints.shareDocument}/$documentId/share',
+        ApiEndpoints.shareDocument(documentId),
         data: request.toJson(),
       );
 

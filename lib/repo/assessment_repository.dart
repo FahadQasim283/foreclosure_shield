@@ -68,7 +68,7 @@ class AssessmentRepository {
         );
       }
 
-      final response = await _apiClient.get('${ApiEndpoints.getAssessment}/$assessmentId');
+      final response = await _apiClient.get(ApiEndpoints.getAssessment(assessmentId));
 
       if (response.data['success'] == true) {
         final assessmentResponse = AssessmentResponse.fromJson(response.data['data']);
@@ -107,7 +107,7 @@ class AssessmentRepository {
   Future<ApiResponse<AssessmentHistoryResponse>> getAssessmentHistory({
     int page = 1,
     int limit = 10,
-    String sortBy = 'createdAt',
+    String sortBy = 'created_at',
     String order = 'desc',
   }) async {
     try {

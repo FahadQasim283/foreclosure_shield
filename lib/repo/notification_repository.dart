@@ -13,9 +13,8 @@ class NotificationRepository {
   // GET ALL NOTIFICATIONS
   // ===============================
   Future<ApiResponse<NotificationsListResponse>> getNotifications({
-    int page = 1,
-    int limit = 20,
-    bool? unreadOnly,
+    int limit = 10,
+    int offset = 0,
   }) async {
     try {
       final token = await TokenStorage.getAccessToken();
@@ -26,10 +25,7 @@ class NotificationRepository {
         );
       }
 
-      String url = '${ApiEndpoints.notifications}?page=$page&limit=$limit';
-      if (unreadOnly != null && unreadOnly) {
-        url += '&unreadOnly=true';
-      }
+      String url = '${ApiEndpoints.allNotifications}?limit=$limit&offset=$offset';
 
       final response = await _apiClient.get(url);
 
@@ -120,9 +116,7 @@ class NotificationRepository {
         );
       }
 
-      final response = await _apiClient.patch(
-        '${ApiEndpoints.markNotificationRead}/$notificationId/read',
-      );
+      final response = await _apiClient.put(ApiEndpoints.markNotificationRead(notificationId));
 
       if (response.data['success'] == true) {
         return ApiResponse.success(
@@ -169,7 +163,7 @@ class NotificationRepository {
         );
       }
 
-      final response = await _apiClient.patch(ApiEndpoints.markAllRead);
+      final response = await _apiClient.put(ApiEndpoints.markAllRead);
 
       if (response.data['success'] == true) {
         return ApiResponse.success(
@@ -214,9 +208,7 @@ class NotificationRepository {
         );
       }
 
-      final response = await _apiClient.delete(
-        '${ApiEndpoints.deleteNotification}/$notificationId',
-      );
+      final response = await _apiClient.delete(ApiEndpoints.deleteNotification(notificationId));
 
       if (response.data['success'] == true) {
         return ApiResponse.success(
@@ -244,105 +236,6 @@ class NotificationRepository {
       );
     } catch (e) {
       debugPrint('Delete notification error: $e');
-      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
-    }
-  }
-
-  // ===============================
-  // GET NOTIFICATION SETTINGS
-  // ===============================
-  Future<ApiResponse<NotificationSettingsResponse>> getNotificationSettings() async {
-    try {
-      final token = await TokenStorage.getAccessToken();
-      if (token == null) {
-        return ApiResponse.failure(
-          'No authentication token',
-          error: ApiError(message: 'No authentication token'),
-        );
-      }
-
-      final response = await _apiClient.get(ApiEndpoints.notificationSettings);
-
-      if (response.data['success'] == true) {
-        final settingsResponse = NotificationSettingsResponse.fromJson(response.data['data']);
-        return ApiResponse.success(settingsResponse, message: response.data['message'] as String?);
-      }
-
-      return ApiResponse.failure(
-        response.data['error']?['message'] ?? 'Failed to fetch notification settings',
-        error: ApiError(
-          message: response.data['error']?['message'] ?? 'Failed to fetch notification settings',
-          code: response.statusCode?.toString(),
-        ),
-      );
-    } on DioException catch (e) {
-      debugPrint('Get notification settings error: $e');
-      return ApiResponse.failure(
-        e.response?.data['error']?['message'] ??
-            e.message ??
-            'Failed to fetch notification settings',
-        error: ApiError(
-          message:
-              e.response?.data['error']?['message'] ??
-              e.message ??
-              'Failed to fetch notification settings',
-          code: e.response?.statusCode?.toString(),
-        ),
-      );
-    } catch (e) {
-      debugPrint('Get notification settings error: $e');
-      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
-    }
-  }
-
-  // ===============================
-  // UPDATE NOTIFICATION SETTINGS
-  // ===============================
-  Future<ApiResponse<NotificationSettingsResponse>> updateNotificationSettings(
-    UpdateNotificationSettingsRequest request,
-  ) async {
-    try {
-      final token = await TokenStorage.getAccessToken();
-      if (token == null) {
-        return ApiResponse.failure(
-          'No authentication token',
-          error: ApiError(message: 'No authentication token'),
-        );
-      }
-
-      final response = await _apiClient.put(
-        ApiEndpoints.updateNotificationSettings,
-        data: request.toJson(),
-      );
-
-      if (response.data['success'] == true) {
-        final settingsResponse = NotificationSettingsResponse.fromJson(response.data['data']);
-        return ApiResponse.success(settingsResponse, message: response.data['message'] as String?);
-      }
-
-      return ApiResponse.failure(
-        response.data['error']?['message'] ?? 'Failed to update notification settings',
-        error: ApiError(
-          message: response.data['error']?['message'] ?? 'Failed to update notification settings',
-          code: response.statusCode?.toString(),
-        ),
-      );
-    } on DioException catch (e) {
-      debugPrint('Update notification settings error: $e');
-      return ApiResponse.failure(
-        e.response?.data['error']?['message'] ??
-            e.message ??
-            'Failed to update notification settings',
-        error: ApiError(
-          message:
-              e.response?.data['error']?['message'] ??
-              e.message ??
-              'Failed to update notification settings',
-          code: e.response?.statusCode?.toString(),
-        ),
-      );
-    } catch (e) {
-      debugPrint('Update notification settings error: $e');
       return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }

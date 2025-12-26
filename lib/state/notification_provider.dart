@@ -30,19 +30,15 @@ class NotificationProvider extends ChangeNotifier {
   List<NotificationModel> get readNotifications => _notifications.where((n) => n.isRead).toList();
 
   // Get Notifications
-  Future<bool> getNotifications({int page = 1, int limit = 20, bool? unreadOnly}) async {
+  Future<bool> getNotifications({int limit = 10, int offset = 0}) async {
     _setState(NotificationState.loading);
     _errorMessage = null;
 
     try {
-      final response = await _notificationRepository.getNotifications(
-        page: page,
-        limit: limit,
-        unreadOnly: unreadOnly,
-      );
+      final response = await _notificationRepository.getNotifications(limit: limit, offset: offset);
 
       if (response.success && response.data != null) {
-        if (page == 1) {
+        if (offset == 0) {
           _notifications = response.data!.notifications;
         } else {
           _notifications.addAll(response.data!.notifications);
@@ -175,49 +171,22 @@ class NotificationProvider extends ChangeNotifier {
     }
   }
 
-  // Get Notification Settings
+  // Get Notification Settings - Moved to Settings
+  // Note: Notification settings are now managed through the settings repository
+  // Use SettingsProvider.getSettings() instead
   Future<bool> getNotificationSettings() async {
-    _setState(NotificationState.loading);
-    _errorMessage = null;
-
-    try {
-      final response = await _notificationRepository.getNotificationSettings();
-
-      if (response.success && response.data != null) {
-        _settings = response.data!.settings;
-        _setState(NotificationState.success);
-        return true;
-      } else {
-        _errorMessage = response.error?.message ?? 'Failed to fetch settings';
-        _setState(NotificationState.error);
-        return false;
-      }
-    } catch (e) {
-      _errorMessage = e.toString();
-      _setState(NotificationState.error);
-      return false;
-    }
+    // This method is deprecated - use SettingsProvider instead
+    _errorMessage = 'Notification settings moved to Settings';
+    return false;
   }
 
-  // Update Notification Settings
+  // Update Notification Settings - Moved to Settings
+  // Note: Notification settings are now managed through the settings repository
+  // Use SettingsProvider.updateSettings() instead
   Future<bool> updateNotificationSettings(UpdateNotificationSettingsRequest request) async {
-    _errorMessage = null;
-
-    try {
-      final response = await _notificationRepository.updateNotificationSettings(request);
-
-      if (response.success && response.data != null) {
-        _settings = response.data!.settings;
-        notifyListeners();
-        return true;
-      } else {
-        _errorMessage = response.error?.message ?? 'Failed to update settings';
-        return false;
-      }
-    } catch (e) {
-      _errorMessage = e.toString();
-      return false;
-    }
+    // This method is deprecated - use SettingsProvider instead
+    _errorMessage = 'Notification settings moved to Settings';
+    return false;
   }
 
   // Refresh notifications (silent)

@@ -56,7 +56,7 @@ class SupportRepository {
         );
       }
 
-      final response = await _apiClient.post(ApiEndpoints.supportTickets, data: request.toJson());
+      final response = await _apiClient.post(ApiEndpoints.createTicket, data: request.toJson());
 
       if (response.data['success'] == true) {
         final ticketResponse = TicketResponse.fromJson(response.data['data']);
@@ -149,7 +149,7 @@ class SupportRepository {
         );
       }
 
-      final response = await _apiClient.get('${ApiEndpoints.supportTickets}/$ticketId');
+      final response = await _apiClient.get(ApiEndpoints.getTicketDetails(ticketId));
 
       if (response.data['success'] == true) {
         final ticketResponse = TicketResponse.fromJson(response.data['data']);
@@ -195,7 +195,7 @@ class SupportRepository {
       }
 
       final response = await _apiClient.post(
-        '${ApiEndpoints.addTicketMessage}/$ticketId/messages',
+        ApiEndpoints.addTicketMessage(ticketId),
         data: request.toJson(),
       );
 

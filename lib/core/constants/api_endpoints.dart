@@ -22,12 +22,13 @@ class ApiEndpoints {
   static const String userProfile = "/users/profile";
   static const String updateProfile = "/users/profile";
   static const String uploadProfileImage = "/users/profile/image";
+  static String getUserById(String userId) => "/users/$userId";
 
   // ===============================
   // ASSESSMENT ENDPOINTS
   // ===============================
   static const String createAssessment = "/assessment";
-  static const String getAssessment = "/assessment"; // /{assessmentId}
+  static String getAssessment(String assessmentId) => "/assessment/$assessmentId";
   static const String assessmentHistory = "/assessment/history";
   static const String latestAssessment = "/assessment/latest";
 
@@ -35,56 +36,53 @@ class ApiEndpoints {
   // ACTION PLAN ENDPOINTS
   // ===============================
   static const String actionPlan = "/action-plan";
-  static const String taskDetails = "/action-plan/tasks"; // /{taskId}
-  static const String updateTaskStatus = "/action-plan/tasks"; // /{taskId}/status
-  static const String updateTaskNotes = "/action-plan/tasks"; // /{taskId}/notes
-  static const String tasksByCategory = "/action-plan/tasks/category"; // /{category}
+  static const String allTasks = "/action-plan/tasks";
+  static String getTaskDetails(String taskId) => "/action-plan/task/$taskId";
+  static String updateTaskStatus(String taskId) => "/action-plan/task/$taskId/status";
+  static String updateTaskNotes(String taskId) => "/action-plan/task/$taskId/notes";
 
   // ===============================
   // DOCUMENT ENDPOINTS
   // ===============================
-  static const String generateLetter = "/documents/generate";
+  static const String generateDocument = "/documents/generate";
   static const String uploadDocument = "/documents/upload";
   static const String documents = "/documents";
-  static const String getDocument = "/documents"; // /{documentId}
-  static const String downloadDocument = "/documents"; // /{documentId}/download
-  static const String deleteDocument = "/documents"; // /{documentId}
-  static const String shareDocument = "/documents"; // /{documentId}/share
+  static String getDocument(String documentId) => "/documents/$documentId";
+  static String downloadDocument(String documentId) => "/documents/$documentId/download";
+  static String deleteDocument(String documentId) => "/documents/$documentId";
+  static String shareDocument(String documentId) => "/documents/$documentId/share";
 
   // ===============================
   // NOTIFICATION ENDPOINTS
   // ===============================
-  static const String notifications = "/notifications";
+  static const String allNotifications = "/notification/all";
   static const String notificationUnreadCount = "/notifications/unread-count";
-  static const String markNotificationRead = "/notifications"; // /{notificationId}/read
-  static const String markAllRead = "/notifications/read-all";
-  static const String deleteNotification = "/notifications"; // /{notificationId}
-  static const String notificationSettings = "/notifications/settings";
-  static const String updateNotificationSettings = "/notifications/settings";
+  static String markNotificationRead(String notificationId) => "/notifications/$notificationId/read";
+  static const String markAllRead = "/notifications/mark-all-read";
+  static String deleteNotification(String notificationId) => "/notifications/$notificationId";
 
   // ===============================
   // SUBSCRIPTION ENDPOINTS
   // ===============================
-  static const String subscriptionPlans = "/subscriptions/plans";
-  static const String currentSubscription = "/subscriptions/current";
-  static const String subscribe = "/subscriptions/subscribe";
-  static const String cancelSubscription = "/subscriptions/cancel";
+  static const String subscriptionPlans = "/subscription/plans";
+  static const String currentSubscription = "/subscription/current";
+  static const String subscribe = "/subscription/subscribe";
+  static const String cancelSubscription = "/subscription/cancel";
 
   // ===============================
   // SUPPORT ENDPOINTS
   // ===============================
   static const String faq = "/support/faq";
-  static const String createTicket = "/support/tickets";
+  static const String createTicket = "/support/ticket";
   static const String supportTickets = "/support/tickets";
-  static const String userTickets = "/support/tickets";
-  static const String ticketDetails = "/support/tickets"; // /{ticketId}
-  static const String addTicketMessage = "/support/tickets"; // /{ticketId}/messages
+  static String getTicketDetails(String ticketId) => "/support/ticket/$ticketId";
+  static String addTicketMessage(String ticketId) => "/support/ticket/$ticketId/message";
   static const String contactUs = "/support/contact";
 
   // ===============================
   // DASHBOARD ENDPOINTS
   // ===============================
-  static const String dashboard = "/dashboard";
+    static const String dashboardSummary = "/dashboard";
   static const String dashboardStatistics = "/dashboard/statistics";
 
   // ===============================
@@ -96,14 +94,18 @@ class ApiEndpoints {
   static const String deleteAccount = "/settings/account";
 
   // ===============================
+  // MISCELLANEOUS ENDPOINTSdelete-account";
+
+  // ===============================
   // MISCELLANEOUS ENDPOINTS
   // ===============================
-  static const String appVersion = "/misc/app/version";
-  static const String healthCheck = "/misc/health";
+  static const String healthCheck = "/";
+  static const String appStatus = "/misc/status";
 
   // ===============================
   // DEVICE ENDPOINTS
   // ===============================
   static const String registerDevice = "/device/register";
-  static const String unregisterDevice = "/device"; // /{deviceId}
+  static const String allDevices = "/device/all";
+  static String unregisterDevice(String deviceId) => "/device/$deviceId";
 }

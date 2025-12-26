@@ -181,4 +181,46 @@ class UserRepository {
       return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
+
+  // ===============================
+  // GET USER BY ID
+  // ===============================
+  Future<ApiResponse<UserProfileResponse>> getUserById(String userId) async {
+    try {
+      final token = await TokenStorage.getAccessToken();
+      if (token == null) {
+        return ApiResponse.failure(
+          'No authentication token',
+          error: ApiError(message: 'No authentication token'),
+        );
+      }
+
+      final response = await _apiClient.get(ApiEndpoints.getUserById(userId));
+
+      if (response.data['success'] == true) {
+        final userResponse = UserProfileResponse.fromJson(response.data['data']);
+        return ApiResponse.success(userResponse, message: response.data['message'] as String?);
+      }
+
+      return ApiResponse.failure(
+        response.data['error']?['message'] ?? 'Failed to fetch user',
+        error: ApiError(
+          message: response.data['error']?['message'] ?? 'Failed to fetch user',
+          code: response.statusCode?.toString(),
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('Get user by ID error: $e');
+      return ApiResponse.failure(
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch user',
+        error: ApiError(
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch user',
+          code: e.response?.statusCode?.toString(),
+        ),
+      );
+    } catch (e) {
+      debugPrint('Get user by ID error: $e');
+      return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
+    }
+  }
 }

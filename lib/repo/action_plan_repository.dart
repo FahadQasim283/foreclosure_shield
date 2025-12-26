@@ -73,7 +73,7 @@ class ActionPlanRepository {
         );
       }
 
-      final response = await _apiClient.get('${ApiEndpoints.taskDetails}/$taskId');
+      final response = await _apiClient.get(ApiEndpoints.getTaskDetails(taskId));
 
       if (response.data['success'] == true) {
         final taskResponse = TaskDetailsResponse.fromJson(response.data['data']);
@@ -120,7 +120,7 @@ class ActionPlanRepository {
       }
 
       final response = await _apiClient.patch(
-        '${ApiEndpoints.updateTaskStatus}/$taskId/status',
+        ApiEndpoints.updateTaskStatus(taskId),
         data: request.toJson(),
       );
 
@@ -169,7 +169,7 @@ class ActionPlanRepository {
       }
 
       final response = await _apiClient.patch(
-        '${ApiEndpoints.updateTaskNotes}/$taskId/notes',
+        ApiEndpoints.updateTaskNotes(taskId),
         data: request.toJson(),
       );
 
@@ -202,9 +202,9 @@ class ActionPlanRepository {
   }
 
   // ===============================
-  // GET TASKS BY CATEGORY
+  // GET ALL TASKS
   // ===============================
-  Future<ApiResponse<TasksByCategoryResponse>> getTasksByCategory(String category) async {
+  Future<ApiResponse<ActionPlanResponse>> getAllTasks() async {
     try {
       final token = await TokenStorage.getAccessToken();
       if (token == null) {
@@ -214,34 +214,31 @@ class ActionPlanRepository {
         );
       }
 
-      final response = await _apiClient.get('${ApiEndpoints.tasksByCategory}/$category');
+      final response = await _apiClient.get(ApiEndpoints.allTasks);
 
       if (response.data['success'] == true) {
-        final categoryResponse = TasksByCategoryResponse.fromJson(response.data['data']);
-        return ApiResponse.success(categoryResponse, message: response.data['message'] as String?);
+        final tasksResponse = ActionPlanResponse.fromJson(response.data['data']);
+        return ApiResponse.success(tasksResponse, message: response.data['message'] as String?);
       }
 
       return ApiResponse.failure(
-        response.data['error']?['message'] ?? 'Failed to fetch tasks by category',
+        response.data['error']?['message'] ?? 'Failed to fetch tasks',
         error: ApiError(
-          message: response.data['error']?['message'] ?? 'Failed to fetch tasks by category',
+          message: response.data['error']?['message'] ?? 'Failed to fetch tasks',
           code: response.statusCode?.toString(),
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get tasks by category error: $e');
+      debugPrint('Get all tasks error: $e');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch tasks by category',
+        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch tasks',
         error: ApiError(
-          message:
-              e.response?.data['error']?['message'] ??
-              e.message ??
-              'Failed to fetch tasks by category',
+          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch tasks',
           code: e.response?.statusCode?.toString(),
         ),
       );
     } catch (e) {
-      debugPrint('Get tasks by category error: $e');
+      debugPrint('Get all tasks error: $e');
       return ApiResponse.failure(e.toString(), error: ApiError(message: e.toString()));
     }
   }
