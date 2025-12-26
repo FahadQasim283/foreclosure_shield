@@ -7,6 +7,8 @@ class DashboardSummary {
   final DocumentsSummary documentsSummary;
   final SubscriptionInfo subscriptionInfo;
   final List<RecentActivity> recentActivities;
+  final List<RecentDocument> recentDocuments;
+  final NextTask? nextTask;
 
   DashboardSummary({
     required this.riskSummary,
@@ -14,6 +16,8 @@ class DashboardSummary {
     required this.documentsSummary,
     required this.subscriptionInfo,
     required this.recentActivities,
+    required this.recentDocuments,
+    this.nextTask,
   });
 
   factory DashboardSummary.fromJson(Map<String, dynamic> json) {
@@ -27,6 +31,12 @@ class DashboardSummary {
       recentActivities: (json['notifications']['recent'] as List)
           .map((e) => RecentActivity.fromJson(e as Map<String, dynamic>))
           .toList(),
+      recentDocuments: (json['documents']['recent'] as List)
+          .map((e) => RecentDocument.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      nextTask: json['actionPlan']['nextTask'] != null
+          ? NextTask.fromJson(json['actionPlan']['nextTask'])
+          : null,
     );
   }
 }
@@ -171,6 +181,53 @@ class RecentActivity {
       description: json['description'] ?? '', // Default to empty if not provided
       timestamp: DateTime.parse(json['createdAt'] as String),
       icon: json['icon'] as String?,
+    );
+  }
+}
+
+// ===============================
+// RECENT DOCUMENT MODEL
+// ===============================
+class RecentDocument {
+  final String id;
+  final String title;
+  final String type;
+  final DateTime createdAt;
+
+  RecentDocument({
+    required this.id,
+    required this.title,
+    required this.type,
+    required this.createdAt,
+  });
+
+  factory RecentDocument.fromJson(Map<String, dynamic> json) {
+    return RecentDocument(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      type: json['type'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+    );
+  }
+}
+
+// ===============================
+// NEXT TASK MODEL
+// ===============================
+class NextTask {
+  final String? id;
+  final String title;
+  final String priority;
+  final DateTime dueDate;
+
+  NextTask({this.id, required this.title, required this.priority, required this.dueDate});
+
+  factory NextTask.fromJson(Map<String, dynamic> json) {
+    return NextTask(
+      id: json['id'] as String?,
+      title: json['title'] as String,
+      priority: json['priority'] as String,
+      dueDate: DateTime.parse(json['dueDate'] as String),
     );
   }
 }
