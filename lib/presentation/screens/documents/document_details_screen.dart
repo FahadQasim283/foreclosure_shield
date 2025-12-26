@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import '/core/theme/app_colors.dart';
 import '/core/theme/app_typography.dart';
-import '/data/mock_data.dart';
+import '/state/document_provider.dart';
 
 class DocumentDetailsScreen extends StatelessWidget {
   final String documentId;
@@ -13,202 +14,234 @@ class DocumentDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Find document by ID
-    final document = MockData.mockDocuments.firstWhere(
-      (doc) => doc.id == documentId,
-      orElse: () => MockData.mockDocuments.first,
-    );
+    return Consumer<DocumentProvider>(
+      builder: (context, documentProvider, child) {
+        // Find document by ID from provider
+        final document = documentProvider.documents.firstWhere(
+          (doc) => doc.id == documentId,
+          orElse: () => documentProvider.currentDocument!,
+        );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Document Details'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.download),
-            onPressed: () {
-              _downloadDocument(context, document);
-            },
-          ),
-          PopupMenuButton(
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'edit',
-                child: Row(
-                  children: [Icon(Icons.edit, size: 20), SizedBox(width: 12), Text('Edit')],
-                ),
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Document Details'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.download),
+                onPressed: () {
+                  _downloadDocument(context, document);
+                },
               ),
-              const PopupMenuItem(
-                value: 'duplicate',
-                child: Row(
-                  children: [Icon(Icons.copy, size: 20), SizedBox(width: 12), Text('Duplicate')],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(Icons.delete, size: 20, color: Colors.red),
-                    SizedBox(width: 12),
-                    Text('Delete', style: TextStyle(color: Colors.red)),
-                  ],
-                ),
-              ),
-            ],
-            onSelected: (value) {
-              if (value == 'delete') {
-                _showDeleteDialog(context);
-              }
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Document Header
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    _getCategoryColor(document.documentType),
-                    _getCategoryColor(document.documentType).withOpacity(0.7),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      document.documentType.toUpperCase(),
-                      style: AppTypography.labelSmall.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+              PopupMenuButton(
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [Icon(Icons.edit, size: 20), SizedBox(width: 12), Text('Edit')],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(document.title, style: AppTypography.h1.copyWith(color: Colors.white)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today, size: 16, color: Colors.white.withOpacity(0.9)),
-                      const SizedBox(width: 6),
-                      Text(
-                        _formatDate(document.uploadedDate),
-                        style: AppTypography.bodySmall.copyWith(
-                          color: Colors.white.withOpacity(0.9),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Icon(Icons.description, size: 16, color: Colors.white.withOpacity(0.9)),
-                      const SizedBox(width: 6),
-                      Text(
-                        (document.fileType ?? 'PDF').toUpperCase(),
-                        style: AppTypography.bodySmall.copyWith(
-                          color: Colors.white.withOpacity(0.9),
-                        ),
-                      ),
-                    ],
+                  const PopupMenuItem(
+                    value: 'duplicate',
+                    child: Row(
+                      children: [
+                        Icon(Icons.copy, size: 20),
+                        SizedBox(width: 12),
+                        Text('Duplicate'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete, size: 20, color: Colors.red),
+                        SizedBox(width: 12),
+                        Text('Delete', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
                   ),
                 ],
+                onSelected: (value) {
+                  if (value == 'delete') {
+                    _showDeleteDialog(context);
+                  }
+                },
               ),
-            ),
-
-            // Document Info
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Document Information', style: AppTypography.h3),
-                  const SizedBox(height: 16),
-                  _buildInfoRow('Type', document.documentType),
-                  _buildInfoRow('File Type', (document.fileType ?? 'PDF').toUpperCase()),
-                  _buildInfoRow('Uploaded', _formatDate(document.uploadedDate)),
-                  if (document.fileUrl != null) _buildInfoRow('File Location', document.fileUrl!),
-                  if (document.generatedContent != null) ...[
-                    const SizedBox(height: 20),
-                    Text('Generated Content', style: AppTypography.h3),
-                    const SizedBox(height: 8),
-                    Text(
-                      document.generatedContent!.length > 200
-                          ? '${document.generatedContent!.substring(0, 200)}...'
-                          : document.generatedContent!,
-                      style: AppTypography.bodyMedium,
+            ],
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Document Header
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        _getCategoryColor(document.documentType),
+                        _getCategoryColor(document.documentType).withOpacity(0.7),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  ],
-                  const SizedBox(height: 24),
-
-                  // Preview Section
-                  Text('Document Preview', style: AppTypography.h3),
-                  const SizedBox(height: 12),
-                  Container(
-                    width: double.infinity,
-                    height: 400,
-                    decoration: BoxDecoration(
-                      color: AppColors.neutral100,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.neutral300),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          document.documentType.toUpperCase(),
+                          style: AppTypography.labelSmall.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(document.title, style: AppTypography.h1.copyWith(color: Colors.white)),
+                      const SizedBox(height: 8),
+                      Row(
                         children: [
                           Icon(
-                            _getFileIcon(document.fileType ?? 'pdf'),
-                            size: 80,
-                            color: AppColors.neutral400,
+                            Icons.calendar_today,
+                            size: 16,
+                            color: Colors.white.withOpacity(0.9),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(width: 6),
                           Text(
-                            '${(document.fileType ?? 'PDF').toUpperCase()} Preview',
-                            style: AppTypography.h4.copyWith(color: AppColors.neutral600),
+                            _formatDate(document.uploadedDate),
+                            style: AppTypography.bodySmall.copyWith(
+                              color: Colors.white.withOpacity(0.9),
+                            ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(width: 16),
+                          Icon(Icons.description, size: 16, color: Colors.white.withOpacity(0.9)),
+                          const SizedBox(width: 6),
                           Text(
-                            'Tap to view full document',
-                            style: AppTypography.bodySmall.copyWith(color: AppColors.neutral500),
+                            (document.fileType ?? 'PDF').toUpperCase(),
+                            style: AppTypography.bodySmall.copyWith(
+                              color: Colors.white.withOpacity(0.9),
+                            ),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(height: 24),
+                ),
 
-                  // Action Buttons
-                  Row(
+                // Document Info
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            _showFullContentDialog(context, document);
-                          },
-                          icon: const Icon(Icons.visibility),
-                          label: const Text('View Full'),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                      Text('Document Information', style: AppTypography.h3),
+                      const SizedBox(height: 16),
+                      _buildInfoRow('Type', document.documentType),
+                      _buildInfoRow('File Type', (document.fileType ?? 'PDF').toUpperCase()),
+                      _buildInfoRow('Uploaded', _formatDate(document.uploadedDate)),
+                      if (document.fileUrl != null)
+                        _buildInfoRow('File Location', document.fileUrl!),
+                      if (document.generatedContent != null) ...[
+                        const SizedBox(height: 20),
+                        Text('Generated Content', style: AppTypography.h3),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppColors.neutral100,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.neutral300),
+                          ),
+                          child: Text(document.generatedContent!, style: AppTypography.bodyMedium),
+                        ),
+                      ],
+                      const SizedBox(height: 24),
+
+                      // Preview Section
+                      Text('Document Preview', style: AppTypography.h3),
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        height: 400,
+                        decoration: BoxDecoration(
+                          color: AppColors.neutral100,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.neutral300),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                _getFileIcon(document.fileType ?? 'pdf'),
+                                size: 80,
+                                color: AppColors.neutral400,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                '${(document.fileType ?? 'PDF').toUpperCase()} Preview',
+                                style: AppTypography.h4.copyWith(color: AppColors.neutral600),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Tap to view full document',
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: AppColors.neutral500,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
+                      const SizedBox(height: 24),
+
+                      // Action Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                _showFullContentDialog(context, document);
+                              },
+                              icon: const Icon(Icons.visibility),
+                              label: const Text('View Full'),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                _shareDocument(context, document);
+                              },
+                              icon: const Icon(Icons.share),
+                              label: const Text('Share'),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: () {
-                            _shareDocument(context, document);
+                            // Edit document
                           },
-                          icon: const Icon(Icons.share),
-                          label: const Text('Share'),
+                          icon: const Icon(Icons.edit),
+                          label: const Text('Edit Document'),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
@@ -216,26 +249,12 @@ class DocumentDetailsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        // Edit document
-                      },
-                      icon: const Icon(Icons.edit),
-                      label: const Text('Edit Document'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

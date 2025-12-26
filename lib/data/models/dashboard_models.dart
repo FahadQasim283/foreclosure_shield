@@ -28,13 +28,17 @@ class DashboardSummary {
       subscriptionInfo: json['user']['subscription'] != null
           ? SubscriptionInfo.fromJson(json['user']['subscription'])
           : SubscriptionInfo(planName: 'Free', status: 'inactive', daysRemaining: 0),
-      recentActivities: (json['notifications']['recent'] as List)
-          .map((e) => RecentActivity.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      recentDocuments: (json['documents']['recent'] as List)
-          .map((e) => RecentDocument.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      nextTask: json['actionPlan']['nextTask'] != null
+      recentActivities: json['notifications'] != null && json['notifications']['recent'] != null
+          ? (json['notifications']['recent'] as List)
+                .map((e) => RecentActivity.fromJson(e as Map<String, dynamic>))
+                .toList()
+          : [],
+      recentDocuments: json['documents'] != null && json['documents']['recent'] != null
+          ? (json['documents']['recent'] as List)
+                .map((e) => RecentDocument.fromJson(e as Map<String, dynamic>))
+                .toList()
+          : [],
+      nextTask: json['actionPlan'] != null && json['actionPlan']['nextTask'] != null
           ? NextTask.fromJson(json['actionPlan']['nextTask'])
           : null,
     );

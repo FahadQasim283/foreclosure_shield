@@ -32,7 +32,7 @@ class Document {
       assessmentId: json['assessmentId'] as String?,
       title: json['title'] as String,
       documentType: json['documentType'] as String,
-      fileUrl: json['fileUrl'] as String?,
+      fileUrl: json['fileUrl'] as String? ?? json['downloadUrl'] as String?,
       fileType: json['fileType'] as String?,
       fileSizeBytes: json['fileSizeBytes'] != null
           ? int.parse(json['fileSizeBytes'].toString())

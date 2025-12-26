@@ -86,7 +86,7 @@ class _GenerateLetterScreenState extends State<GenerateLetterScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                   // Navigate to document details
-                  context.pop();
+                  context.go('/documents/${document.id}');
                 },
                 child: const Text('View Letter'),
               ),
