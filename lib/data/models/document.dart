@@ -28,7 +28,7 @@ class Document {
   factory Document.fromJson(Map<String, dynamic> json) {
     return Document(
       id: json['id'] as String,
-      userId: json['userId'].toString(),
+      userId: json['userId']?.toString() ?? json['user_id']?.toString() ?? '',
       assessmentId: json['assessmentId'] as String?,
       title: json['title'] as String,
       documentType: json['documentType'] as String,
@@ -36,8 +36,16 @@ class Document {
       fileType: json['fileType'] as String?,
       fileSizeBytes: json['fileSizeBytes'] != null
           ? int.parse(json['fileSizeBytes'].toString())
+          : json['fileSize'] != null
+          ? int.parse(json['fileSize'].toString())
           : null,
-      uploadedDate: DateTime.parse(json['uploadedDate'] as String),
+      uploadedDate: json['uploadedDate'] != null
+          ? DateTime.parse(json['uploadedDate'] as String)
+          : json['uploaded_date'] != null
+          ? DateTime.parse(json['uploaded_date'] as String)
+          : json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(),
       generatedContent: json['generatedContent'] as String?,
       letterType: json['letterType'] as String?,
     );

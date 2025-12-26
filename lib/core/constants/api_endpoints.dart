@@ -23,7 +23,7 @@ class ApiEndpoints {
   static const String updateProfile = "/users/profile";
   static const String uploadProfileImage = "/users/profile/image";
   static String getUserById(String userId) => "/users/$userId";
-
+  static const String allUsers = "/users/all";
   // ===============================
   // ASSESSMENT ENDPOINTS
   // ===============================
@@ -36,10 +36,15 @@ class ApiEndpoints {
   // ACTION PLAN ENDPOINTS
   // ===============================
   static const String actionPlan = "/action-plan";
-  static const String allTasks = "/action-plan/tasks";
-  static String getTaskDetails(String taskId) => "/action-plan/task/$taskId";
-  static String updateTaskStatus(String taskId) => "/action-plan/task/$taskId/status";
-  static String updateTaskNotes(String taskId) => "/action-plan/task/$taskId/notes";
+  static const String createTask = "/action-plan/tasks";
+  static const String allTasks = "/action-plan";
+  static String getTaskDetails(String taskId) => "/action-plan/tasks/$taskId";
+  static String updateTask(String taskId) => "/action-plan/tasks/$taskId";
+  static String deleteTask(String taskId) => "/action-plan/tasks/$taskId";
+  static String updateTaskStatus(String taskId) => "/action-plan/tasks/$taskId/status";
+  static String updateTaskNotes(String taskId) => "/action-plan/tasks/$taskId/notes";
+  static const String reorderTasks = "/action-plan/tasks/reorder";
+  static String getTasksByCategory(String category) => "/action-plan/tasks/category/$category";
 
   // ===============================
   // DOCUMENT ENDPOINTS
@@ -55,11 +60,11 @@ class ApiEndpoints {
   // ===============================
   // NOTIFICATION ENDPOINTS
   // ===============================
-  static const String allNotifications = "/notification/all";
+  static const String allNotifications = "/notifications";
   static const String notificationUnreadCount = "/notifications/unread-count";
-  static String markNotificationRead(String notificationId) => "/notifications/$notificationId/read";
-  static const String markAllRead = "/notifications/mark-all-read";
-  static String deleteNotification(String notificationId) => "/notifications/$notificationId";
+  static String markNotificationRead(String notificationId) => "/notification/$notificationId/read";
+  static const String markAllRead = "/notification/mark-all-read";
+  static String deleteNotification(String notificationId) => "/notification/$notificationId";
 
   // ===============================
   // SUBSCRIPTION ENDPOINTS
@@ -82,7 +87,7 @@ class ApiEndpoints {
   // ===============================
   // DASHBOARD ENDPOINTS
   // ===============================
-    static const String dashboardSummary = "/dashboard";
+  static const String dashboardSummary = "/dashboard";
   static const String dashboardStatistics = "/dashboard/statistics";
 
   // ===============================
@@ -91,16 +96,18 @@ class ApiEndpoints {
   static const String settings = "/settings";
   static const String updateSettings = "/settings";
   static const String changePassword = "/settings/change-password";
-  static const String deleteAccount = "/settings/account";
-
-  // ===============================
-  // MISCELLANEOUS ENDPOINTSdelete-account";
+  static const String deleteAccount = "/settings/delete-account";
 
   // ===============================
   // MISCELLANEOUS ENDPOINTS
   // ===============================
-  static const String healthCheck = "/";
+  static const String misc = "/misc";
+  static const String appVersion = "/misc/app/version";
+  static const String healthCheck = "/misc/health";
   static const String appStatus = "/misc/status";
+  static const String taskStatusEnums = "/misc/enums/task-status";
+  static const String riskLevelsEnums = "/misc/enums/risk-levels";
+  static const String stats = "/misc/stats";
 
   // ===============================
   // DEVICE ENDPOINTS

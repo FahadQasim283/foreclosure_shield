@@ -57,14 +57,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: CircleAvatar(
                     backgroundColor: AppColors.primary,
                     child: Text(
-                      user?.name[0].toUpperCase() ?? 'U',
+                      user?.displayName[0].toUpperCase() ?? 'U',
                       style: AppTypography.bodyLarge.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  title: Text(user?.name ?? 'User', style: AppTypography.bodyLarge),
+                  title: Text(user?.displayName ?? 'User', style: AppTypography.bodyLarge),
                   subtitle: Text(user?.email ?? '', style: AppTypography.bodySmall),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push(RouteNames.editProfile),

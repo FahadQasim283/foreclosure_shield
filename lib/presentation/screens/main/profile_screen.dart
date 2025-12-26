@@ -98,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          user?.name ?? 'User',
+                          user?.displayName ?? 'User',
                           style: AppTypography.h2.copyWith(color: AppColors.white),
                         ),
                         const SizedBox(height: 4),

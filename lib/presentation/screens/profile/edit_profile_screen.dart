@@ -35,7 +35,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (success && userProvider.user != null) {
       final user = userProvider.user!;
-      _nameController.text = user.name;
+      _nameController.text = '${user.firstName ?? ''} ${user.lastName ?? ''}'.trim();
       _emailController.text = user.email;
       _phoneController.text = user.phone ?? '';
     }

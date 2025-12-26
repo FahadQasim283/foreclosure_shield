@@ -1,7 +1,9 @@
 class User {
   final String? id;
+  final String? username;
   final String email;
-  final String name;
+  final String? firstName;
+  final String? lastName;
   final String? phone;
   final String? profileImage;
   final String? propertyAddress;
@@ -15,8 +17,10 @@ class User {
 
   User({
     this.id,
+    this.username,
     required this.email,
-    required this.name,
+    this.firstName,
+    this.lastName,
     this.phone,
     this.profileImage,
     this.propertyAddress,
@@ -29,13 +33,19 @@ class User {
     required this.updatedAt,
   });
 
+  // Computed property for full name
+  String get name => '${firstName ?? ''} ${lastName ?? ''}'.trim();
+  String get displayName => name.isNotEmpty ? name : username ?? email;
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id']?.toString(),
+      username: json['username'] as String?,
       email: json['email'] as String,
-      name: json['name'] as String,
+      firstName: json['first_name'] as String? ?? json['firstName'] as String?,
+      lastName: json['last_name'] as String? ?? json['lastName'] as String?,
       phone: json['phone']?.toString(),
-      profileImage: json['profileImage'] as String?,
+      profileImage: json['profile_image'] as String? ?? json['profileImage'] as String?,
       propertyAddress: json['propertyAddress'] as String?,
       city: json['city'] as String?,
       state: json['state'] as String?,
@@ -56,10 +66,12 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'username': username,
       'email': email,
-      'name': name,
+      'first_name': firstName,
+      'last_name': lastName,
       'phone': phone,
-      'profileImage': profileImage,
+      'profile_image': profileImage,
       'propertyAddress': propertyAddress,
       'city': city,
       'state': state,
@@ -73,8 +85,10 @@ class User {
 
   User copyWith({
     String? id,
+    String? username,
     String? email,
-    String? name,
+    String? firstName,
+    String? lastName,
     String? phone,
     String? profileImage,
     String? propertyAddress,
@@ -88,8 +102,10 @@ class User {
   }) {
     return User(
       id: id ?? this.id,
+      username: username ?? this.username,
       email: email ?? this.email,
-      name: name ?? this.name,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
       phone: phone ?? this.phone,
       profileImage: profileImage ?? this.profileImage,
       propertyAddress: propertyAddress ?? this.propertyAddress,

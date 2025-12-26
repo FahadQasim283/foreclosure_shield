@@ -83,7 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
               'Welcome back,',
               style: AppTypography.bodySmall.copyWith(color: AppColors.white.withOpacity(0.9)),
             ),
-            Text(user?.name ?? 'User', style: AppTypography.h4.copyWith(color: AppColors.white)),
+            Text(
+              user?.displayName ?? 'User',
+              style: AppTypography.h4.copyWith(color: AppColors.white),
+            ),
           ],
         ),
         actions: [
