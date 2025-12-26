@@ -136,27 +136,37 @@ class _ActionPlanScreenState extends State<ActionPlanScreen> {
 
   Widget _buildTasksList(BuildContext context, List tasks) {
     final categorizedTasks = {
-      'immediate': tasks.where((t) => t.category == 'immediate').toList(),
-      'urgent': tasks.where((t) => t.category == 'urgent').toList(),
-      'important': tasks.where((t) => t.category == 'important').toList(),
+      'IMMEDIATE': tasks.where((t) => t.category.toUpperCase() == 'IMMEDIATE').toList(),
+      'SHORT_TERM': tasks.where((t) => t.category.toUpperCase() == 'SHORT_TERM').toList(),
+      'LONG_TERM': tasks.where((t) => t.category.toUpperCase() == 'LONG_TERM').toList(),
+      'OTHER': tasks
+          .where(
+            (t) => !['IMMEDIATE', 'SHORT_TERM', 'LONG_TERM'].contains(t.category.toUpperCase()),
+          )
+          .toList(),
     };
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        if (categorizedTasks['immediate']!.isNotEmpty) ...[
+        if (categorizedTasks['IMMEDIATE']!.isNotEmpty) ...[
           _buildCategoryHeader('Immediate Actions', AppColors.red),
-          ...categorizedTasks['immediate']!.map((task) => _buildTaskItem(context, task)),
+          ...categorizedTasks['IMMEDIATE']!.map((task) => _buildTaskItem(context, task)),
           const SizedBox(height: 16),
         ],
-        if (categorizedTasks['urgent']!.isNotEmpty) ...[
-          _buildCategoryHeader('Urgent Actions', AppColors.orange),
-          ...categorizedTasks['urgent']!.map((task) => _buildTaskItem(context, task)),
+        if (categorizedTasks['SHORT_TERM']!.isNotEmpty) ...[
+          _buildCategoryHeader('Short Term Actions', AppColors.orange),
+          ...categorizedTasks['SHORT_TERM']!.map((task) => _buildTaskItem(context, task)),
           const SizedBox(height: 16),
         ],
-        if (categorizedTasks['important']!.isNotEmpty) ...[
-          _buildCategoryHeader('Important Actions', AppColors.blue),
-          ...categorizedTasks['important']!.map((task) => _buildTaskItem(context, task)),
+        if (categorizedTasks['LONG_TERM']!.isNotEmpty) ...[
+          _buildCategoryHeader('Long Term Actions', AppColors.blue),
+          ...categorizedTasks['LONG_TERM']!.map((task) => _buildTaskItem(context, task)),
+          const SizedBox(height: 16),
+        ],
+        if (categorizedTasks['OTHER']!.isNotEmpty) ...[
+          _buildCategoryHeader('Other Actions', AppColors.neutral600),
+          ...categorizedTasks['OTHER']!.map((task) => _buildTaskItem(context, task)),
         ],
       ],
     );
@@ -180,14 +190,21 @@ class _ActionPlanScreenState extends State<ActionPlanScreen> {
   }
 
   Widget _buildTaskItem(BuildContext context, dynamic task) {
+    final actionPlanProvider = context.read<ActionPlanProvider>();
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: Checkbox(
           value: task.isCompleted,
-          onChanged: (value) {
-            // Toggle task completion
-          },
+          onChanged: task.id != null && task.id.isNotEmpty
+              ? (value) async {
+                  if (value != null) {
+                    debugPrint('Updating task status for taskId: ${task.id}');
+                    await actionPlanProvider.updateTaskStatus(task.id, value);
+                  }
+                }
+              : null,
         ),
         title: Text(
           task.title,
@@ -208,9 +225,30 @@ class _ActionPlanScreenState extends State<ActionPlanScreen> {
             ),
             if (task.dueDate != null) ...[
               const SizedBox(height: 4),
-              Text(
-                'Due: ${_formatDate(task.dueDate)}',
-                style: AppTypography.caption.copyWith(color: AppColors.neutral600),
+              Row(
+                children: [
+                  Icon(Icons.calendar_today, size: 12, color: AppColors.neutral600),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Due: ${_formatDate(task.dueDate)}',
+                    style: AppTypography.caption.copyWith(color: AppColors.neutral600),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: _getPriorityColor(task.priority).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      task.priority,
+                      style: AppTypography.caption.copyWith(
+                        color: _getPriorityColor(task.priority),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ],
@@ -221,6 +259,19 @@ class _ActionPlanScreenState extends State<ActionPlanScreen> {
         },
       ),
     );
+  }
+
+  Color _getPriorityColor(String priority) {
+    switch (priority.toUpperCase()) {
+      case 'HIGH':
+        return AppColors.red;
+      case 'MEDIUM':
+        return AppColors.orange;
+      case 'LOW':
+        return AppColors.green;
+      default:
+        return AppColors.neutral500;
+    }
   }
 
   String _formatDate(DateTime date) {

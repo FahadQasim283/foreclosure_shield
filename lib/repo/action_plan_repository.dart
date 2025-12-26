@@ -110,6 +110,9 @@ class ActionPlanRepository {
     required String taskId,
     required UpdateTaskStatusRequest request,
   }) async {
+    debugPrint('Repository.updateTaskStatus called with taskId: $taskId');
+    debugPrint('Calling endpoint: ${ApiEndpoints.updateTaskStatus(taskId)}');
+
     try {
       final token = await TokenStorage.getAccessToken();
       if (token == null) {

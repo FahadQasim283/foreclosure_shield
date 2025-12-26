@@ -83,6 +83,10 @@ class ActionPlanProvider extends ChangeNotifier {
 
   // Update Task Status
   Future<bool> updateTaskStatus(String taskId, bool isCompleted) async {
+    debugPrint(
+      'ActionPlanProvider.updateTaskStatus called with taskId: $taskId, isCompleted: $isCompleted',
+    );
+
     // Optimistic update
     final previousState = _taskCompletionStates[taskId];
     _taskCompletionStates[taskId] = isCompleted;
