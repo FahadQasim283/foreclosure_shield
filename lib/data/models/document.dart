@@ -28,16 +28,26 @@ class Document {
   factory Document.fromJson(Map<String, dynamic> json) {
     return Document(
       id: json['id'] as String,
-      userId: json['user_id'] as String,
-      assessmentId: json['assessment_id'] as String?,
+      userId: json['userId']?.toString() ?? json['user_id']?.toString() ?? '',
+      assessmentId: json['assessmentId'] as String?,
       title: json['title'] as String,
-      documentType: json['document_type'] as String,
-      fileUrl: json['file_url'] as String?,
-      fileType: json['file_type'] as String?,
-      fileSizeBytes: json['file_size_bytes'] as int?,
-      uploadedDate: DateTime.parse(json['uploaded_date'] as String),
-      generatedContent: json['generated_content'] as String?,
-      letterType: json['letter_type'] as String?,
+      documentType: json['documentType'] as String,
+      fileUrl: json['fileUrl'] as String? ?? json['downloadUrl'] as String?,
+      fileType: json['fileType'] as String?,
+      fileSizeBytes: json['fileSizeBytes'] != null
+          ? int.parse(json['fileSizeBytes'].toString())
+          : json['fileSize'] != null
+          ? int.parse(json['fileSize'].toString())
+          : null,
+      uploadedDate: json['uploadedDate'] != null
+          ? DateTime.parse(json['uploadedDate'] as String)
+          : json['uploaded_date'] != null
+          ? DateTime.parse(json['uploaded_date'] as String)
+          : json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(),
+      generatedContent: json['generatedContent'] as String?,
+      letterType: json['letterType'] as String?,
     );
   }
 

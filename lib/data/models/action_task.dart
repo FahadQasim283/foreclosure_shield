@@ -25,18 +25,18 @@ class ActionTask {
 
   factory ActionTask.fromJson(Map<String, dynamic> json) {
     return ActionTask(
-      id: json['id'] as String,
-      assessmentId: json['assessment_id'] as String,
+      id: json['id'] ?? '',
+      assessmentId: json['assessmentId'] as String,
       title: json['title'] as String,
       description: json['description'] as String,
       category: json['category'] as String,
       priority: json['priority'] as String,
-      dueDate: json['due_date'] != null ? DateTime.parse(json['due_date'] as String) : null,
-      isCompleted: json['is_completed'] as bool? ?? false,
-      completedDate: json['completed_date'] != null
-          ? DateTime.parse(json['completed_date'] as String)
+      dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate'] as String) : null,
+      isCompleted: json['isCompleted'] == 'true',
+      completedDate: json['completedDate'] != null
+          ? DateTime.parse(json['completedDate'] as String)
           : null,
-      sortOrder: json['sort_order'] as int,
+      sortOrder: json['sortOrder'] ?? 0,
     );
   }
 

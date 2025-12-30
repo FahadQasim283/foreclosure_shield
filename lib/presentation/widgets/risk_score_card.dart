@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/theme.dart';
-import '../../data/models/risk_assessment.dart';
 
 class RiskScoreCard extends StatelessWidget {
-  final RiskAssessment assessment;
+  final int riskScore;
+  final String riskLevel;
 
-  const RiskScoreCard({super.key, required this.assessment});
+  const RiskScoreCard({super.key, required this.riskScore, required this.riskLevel});
 
   @override
   Widget build(BuildContext context) {
-    final color = AppColors.getRiskCategoryColor(assessment.riskCategory);
+    final color = _getRiskColor(riskLevel);
 
     return Container(
       decoration: AppWidgetStyles.elevatedCard,
@@ -25,17 +25,14 @@ class RiskScoreCard extends StatelessWidget {
                 children: [
                   Text('Risk Assessment', style: AppTypography.h4),
                   const SizedBox(height: 4),
-                  Text(
-                    'Last updated: ${_formatDate(assessment.assessmentDate)}',
-                    style: AppTypography.caption,
-                  ),
+                  Text('Current Risk Level', style: AppTypography.caption),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(20)),
                 child: Text(
-                  assessment.riskCategory,
+                  riskLevel.toUpperCase(),
                   style: AppTypography.badge.copyWith(color: AppColors.white),
                 ),
               ),
@@ -53,7 +50,7 @@ class RiskScoreCard extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    '${assessment.riskScore}',
+                    '$riskScore',
                     style: AppTypography.riskScoreMedium.copyWith(color: color),
                   ),
                 ),
@@ -66,7 +63,7 @@ class RiskScoreCard extends StatelessWidget {
                     Text('Foreclosure Risk Score', style: AppTypography.bodyMedium),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
-                      value: assessment.riskScore / 100,
+                      value: riskScore / 100,
                       backgroundColor: AppColors.neutral200,
                       valueColor: AlwaysStoppedAnimation<Color>(color),
                       minHeight: 8,
@@ -76,56 +73,23 @@ class RiskScoreCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildStat(
-                'Amount Owed',
-                '\$${_formatCurrency(assessment.amountOwed ?? 0)}',
-                Icons.attach_money,
-              ),
-              Container(width: 1, height: 40, color: AppColors.divider),
-              _buildStat(
-                'Missed Payments',
-                '${assessment.missedPayments ?? 0}',
-                Icons.calendar_today,
-              ),
-              Container(width: 1, height: 40, color: AppColors.divider),
-              _buildStat(
-                'Property Value',
-                '\$${_formatCurrency(assessment.propertyValue ?? 0)}',
-                Icons.home,
-              ),
-            ],
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildStat(String label, String value, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, size: 20, color: AppColors.primary),
-        const SizedBox(height: 4),
-        Text(value, style: AppTypography.h4),
-        const SizedBox(height: 2),
-        Text(label, style: AppTypography.caption, textAlign: TextAlign.center),
-      ],
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  String _formatCurrency(double amount) {
-    if (amount >= 1000000) {
-      return '${(amount / 1000000).toStringAsFixed(1)}M';
-    } else if (amount >= 1000) {
-      return '${(amount / 1000).toStringAsFixed(0)}K';
+  Color _getRiskColor(String level) {
+    switch (level.toLowerCase()) {
+      case 'low':
+        return AppColors.green;
+      case 'moderate':
+        return AppColors.yellow;
+      case 'high':
+        return AppColors.orange;
+      case 'critical':
+        return AppColors.red;
+      default:
+        return AppColors.neutral500;
     }
-    return amount.toStringAsFixed(0);
   }
 }

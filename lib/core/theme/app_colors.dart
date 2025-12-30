@@ -103,6 +103,8 @@ class AppColors {
   static const Color riskAtRisk = amber;
   static const Color riskLow = green;
 
+  static Color get yellow => amber;
+
   /// Returns color based on risk score (0-100)
   static Color getRiskColor(int score) {
     if (score >= 80) return riskCritical;
