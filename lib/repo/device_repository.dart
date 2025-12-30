@@ -37,12 +37,23 @@ class DeviceRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Register device error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Register device error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to register device',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to register device',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to register device',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to register device',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -83,12 +94,23 @@ class DeviceRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Unregister device error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Unregister device error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to unregister device',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to unregister device',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to unregister device',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to unregister device',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -127,11 +149,23 @@ class DeviceRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get all devices error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get all devices error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch devices',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch devices',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch devices',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch devices',
           code: e.response?.statusCode?.toString(),
         ),
       );

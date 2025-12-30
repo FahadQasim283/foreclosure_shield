@@ -37,11 +37,23 @@ class UserRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get user profile error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get user profile error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch profile',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch profile',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch profile',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch profile',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -79,11 +91,23 @@ class UserRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Update profile error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Update profile error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Profile update failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Profile update failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Profile update failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Profile update failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -121,11 +145,23 @@ class UserRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Update profile error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Update profile error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update profile',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to update profile',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update profile',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to update profile',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -168,11 +204,23 @@ class UserRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Upload profile image error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Upload profile image error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Image upload failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Image upload failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Image upload failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Image upload failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -210,11 +258,23 @@ class UserRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get user by ID error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get user by ID error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch user',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch user',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch user',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch user',
           code: e.response?.statusCode?.toString(),
         ),
       );

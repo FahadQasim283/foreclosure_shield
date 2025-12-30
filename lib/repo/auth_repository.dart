@@ -37,11 +37,23 @@ class AuthRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Signup error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Signup error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Signup failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Signup failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Signup failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Signup failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -78,11 +90,23 @@ class AuthRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Login error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Login error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Login failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Login failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Login failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Login failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -112,11 +136,23 @@ class AuthRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Forgot password error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Forgot password error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Forgot password failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Forgot password failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Forgot password failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Forgot password failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -146,11 +182,23 @@ class AuthRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Verify OTP error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Verify OTP error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'OTP verification failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'OTP verification failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'OTP verification failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'OTP verification failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -180,11 +228,23 @@ class AuthRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Reset password error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Reset password error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Password reset failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Password reset failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Password reset failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Password reset failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -232,11 +292,23 @@ class AuthRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Refresh token error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Refresh token error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Token refresh failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Token refresh failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Token refresh failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Token refresh failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -262,7 +334,12 @@ class AuthRepository {
 
       return ApiResponse.success(null, message: 'Logout successful');
     } on DioException catch (e) {
-      debugPrint('Logout error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Logout error: $errorMsg');
       // Clear tokens even if API call fails
       await TokenStorage.clearAll();
       return ApiResponse.success(null, message: 'Logout successful');
@@ -302,11 +379,23 @@ class AuthRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get current user error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get current user error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch user',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch user',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch user',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch user',
           code: e.response?.statusCode?.toString(),
         ),
       );

@@ -37,12 +37,23 @@ class DashboardRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get dashboard error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get dashboard error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch dashboard',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch dashboard',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch dashboard',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch dashboard',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -80,12 +91,23 @@ class DashboardRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get dashboard statistics error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get dashboard statistics error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch statistics',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch statistics',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch statistics',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch statistics',
           code: e.response?.statusCode?.toString(),
         ),
       );

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../data/models/settings_models.dart';
 import '../repo/settings_repository.dart';
 import '../services/token_storage.dart';
+import '../core/utils/error_handler.dart';
 
 enum SettingsState { idle, loading, success, error }
 
@@ -43,7 +44,7 @@ class SettingsProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch settings');
       _setState(SettingsState.error);
       return false;
     }
@@ -67,7 +68,7 @@ class SettingsProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to update settings');
       _setState(SettingsState.error);
       return false;
     }
@@ -147,7 +148,7 @@ class SettingsProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to change password');
       _setState(SettingsState.error);
       return false;
     }
@@ -175,7 +176,7 @@ class SettingsProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to update settings');
       _setState(SettingsState.error);
       return false;
     }

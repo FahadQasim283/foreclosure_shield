@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../data/models/api_response.dart';
 import '../data/models/dashboard_models.dart';
 import '../repo/dashboard_repository.dart';
+import '../core/utils/error_handler.dart';
 
 enum DashboardState { idle, loading, success, error }
 
@@ -51,7 +52,7 @@ class DashboardProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch dashboard summary');
       _setState(DashboardState.error);
       return false;
     }
@@ -75,7 +76,7 @@ class DashboardProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch statistics');
       _setState(DashboardState.error);
       return false;
     }
@@ -113,7 +114,7 @@ class DashboardProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch dashboard data');
       _setState(DashboardState.error);
       return false;
     }

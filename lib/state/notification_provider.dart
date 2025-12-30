@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../data/models/notification_models.dart';
 import '../repo/notification_repository.dart';
+import '../core/utils/error_handler.dart';
 
 enum NotificationState { idle, loading, success, error }
 
@@ -52,7 +53,7 @@ class NotificationProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch notifications');
       _setState(NotificationState.error);
       return false;
     }
@@ -95,7 +96,7 @@ class NotificationProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to mark notification as read');
       await getNotifications();
       return false;
     }
@@ -125,7 +126,7 @@ class NotificationProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to mark all as read');
       await getNotifications();
       return false;
     }
@@ -165,7 +166,7 @@ class NotificationProvider extends ChangeNotifier {
       // Revert delete
       _notifications.add(deletedNotification);
       if (wasUnread) _unreadCount++;
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to delete notification');
       notifyListeners();
       return false;
     }

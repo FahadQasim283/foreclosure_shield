@@ -3,6 +3,7 @@ import '../data/models/auth_models.dart';
 import '../data/models/user.dart';
 import '../repo/auth_repository.dart';
 import '../services/token_storage.dart';
+import '../core/utils/error_handler.dart';
 
 enum AuthState { idle, loading, authenticated, unauthenticated, error }
 
@@ -93,7 +94,7 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Login failed');
       _setState(AuthState.error);
       return false;
     }
@@ -135,7 +136,7 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Request failed');
       _setState(AuthState.error);
       return false;
     }
@@ -158,7 +159,7 @@ class AuthProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'OTP verification failed');
       _setState(AuthState.error);
       return null;
     }
@@ -181,7 +182,7 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Password reset failed');
       _setState(AuthState.error);
       return false;
     }

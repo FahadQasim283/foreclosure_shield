@@ -29,11 +29,23 @@ class SupportRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get FAQ error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get FAQ error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch FAQ',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch FAQ',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch FAQ',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch FAQ',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -71,11 +83,23 @@ class SupportRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Create ticket error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Create ticket error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to create ticket',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to create ticket',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to create ticket',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to create ticket',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -122,11 +146,23 @@ class SupportRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get user tickets error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get user tickets error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch tickets',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch tickets',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch tickets',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch tickets',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -164,11 +200,23 @@ class SupportRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get ticket error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get ticket error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch ticket',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch ticket',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch ticket',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch ticket',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -212,11 +260,23 @@ class SupportRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Add ticket message error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Add ticket message error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to add message',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to add message',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to add message',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to add message',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -246,11 +306,23 @@ class SupportRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Contact us error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Contact us error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to send message',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to send message',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to send message',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to send message',
           code: e.response?.statusCode?.toString(),
         ),
       );

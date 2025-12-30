@@ -29,12 +29,21 @@ class SubscriptionRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get subscription plans error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get subscription plans error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch subscription plans',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch subscription plans',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ??
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
               e.message ??
               'Failed to fetch subscription plans',
           code: e.response?.statusCode?.toString(),
@@ -77,14 +86,21 @@ class SubscriptionRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get current subscription error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get current subscription error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ??
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
             e.message ??
             'Failed to fetch current subscription',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ??
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
               e.message ??
               'Failed to fetch current subscription',
           code: e.response?.statusCode?.toString(),
@@ -124,11 +140,23 @@ class SubscriptionRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Subscribe error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Subscribe error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Subscription failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Subscription failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Subscription failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Subscription failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -171,12 +199,23 @@ class SubscriptionRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Cancel subscription error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Cancel subscription error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to cancel subscription',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to cancel subscription',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to cancel subscription',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to cancel subscription',
           code: e.response?.statusCode?.toString(),
         ),
       );

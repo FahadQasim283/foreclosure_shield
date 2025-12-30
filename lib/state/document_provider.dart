@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../data/models/document_models.dart';
 import '../data/models/document.dart';
 import '../repo/document_repository.dart';
+import '../core/utils/error_handler.dart';
 
 enum DocumentState { idle, loading, success, error }
 
@@ -52,7 +53,7 @@ class DocumentProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to generate letter');
       _setState(DocumentState.error);
       return null;
     }
@@ -92,7 +93,7 @@ class DocumentProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to upload document');
       _uploadProgress = 0.0;
       _setState(DocumentState.error);
       return null;
@@ -125,7 +126,7 @@ class DocumentProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch documents');
       _setState(DocumentState.error);
       return false;
     }
@@ -156,7 +157,7 @@ class DocumentProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch document');
       _setState(DocumentState.error);
       return false;
     }
@@ -189,7 +190,7 @@ class DocumentProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to download document');
       _downloadProgress = 0.0;
       notifyListeners();
       return null;
@@ -223,7 +224,7 @@ class DocumentProvider extends ChangeNotifier {
     } catch (e) {
       // Revert delete
       _documents.add(deletedDoc);
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to delete document');
       notifyListeners();
       return false;
     }
@@ -246,7 +247,7 @@ class DocumentProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to share document');
       return false;
     }
   }

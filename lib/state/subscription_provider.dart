@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../data/models/subscription_models.dart';
 import '../repo/subscription_repository.dart';
+import '../core/utils/error_handler.dart';
 
 enum SubscriptionState { idle, loading, success, error }
 
@@ -58,7 +59,7 @@ class SubscriptionProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch subscription plans');
       _setState(SubscriptionState.error);
       return false;
     }
@@ -82,7 +83,7 @@ class SubscriptionProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch subscription');
       _setState(SubscriptionState.error);
       return false;
     }
@@ -114,7 +115,7 @@ class SubscriptionProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to subscribe');
       _setState(SubscriptionState.error);
       return false;
     }
@@ -143,7 +144,7 @@ class SubscriptionProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to cancel subscription');
       _setState(SubscriptionState.error);
       return false;
     }

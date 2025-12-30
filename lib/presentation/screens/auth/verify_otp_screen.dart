@@ -24,6 +24,12 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   bool _isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    print('VerifyOtpScreen initialized with email: ${widget.email}');
+  }
+
+  @override
   void dispose() {
     for (var controller in _otpControllers) {
       controller.dispose();
@@ -46,6 +52,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
     setState(() => _isLoading = true);
 
+    print('Verifying OTP - Email: ${widget.email}, OTP: $_otp');
     final authProvider = context.read<AuthProvider>();
     final resetToken = await authProvider.verifyOtp(
       VerifyOtpRequest(email: widget.email ?? '', otp: _otp),
@@ -148,9 +155,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                             ForgotPasswordRequest(email: widget.email ?? ''),
                           );
                           if (mounted) {
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(const SnackBar(content: Text('OTP resent successfully')));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('OTP resent successfully')),
+                            );
                           }
                         },
                   child: const Text('Resend Code'),

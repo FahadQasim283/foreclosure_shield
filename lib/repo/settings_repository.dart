@@ -37,11 +37,23 @@ class SettingsRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get settings error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get settings error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch settings',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch settings',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch settings',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch settings',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -79,12 +91,23 @@ class SettingsRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Update settings error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Update settings error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update settings',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to update settings',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to update settings',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to update settings',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -122,12 +145,23 @@ class SettingsRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Change password error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Change password error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to change password',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to change password',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to change password',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to change password',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -167,11 +201,23 @@ class SettingsRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Delete account error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Delete account error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to delete account',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to delete account',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to delete account',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to delete account',
           code: e.response?.statusCode?.toString(),
         ),
       );

@@ -37,11 +37,23 @@ class DocumentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Generate letter error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Generate letter error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Letter generation failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Letter generation failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Letter generation failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Letter generation failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -90,11 +102,23 @@ class DocumentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Upload document error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Upload document error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Document upload failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Document upload failed',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Document upload failed',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Document upload failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -146,12 +170,23 @@ class DocumentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get documents error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get documents error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch documents',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch documents',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch documents',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch documents',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -205,12 +240,23 @@ class DocumentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('List documents error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('List documents error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch documents',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch documents',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch documents',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch documents',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -248,11 +294,23 @@ class DocumentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get document error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get document error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch document',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch document',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch document',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch document',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -299,12 +357,23 @@ class DocumentRepository {
 
       return ApiResponse.success(savePath, message: 'Document downloaded successfully');
     } on DioException catch (e) {
-      debugPrint('Download document error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Download document error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to download document',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to download document',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to download document',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to download document',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -344,12 +413,23 @@ class DocumentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Delete document error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Delete document error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to delete document',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to delete document',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to delete document',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to delete document',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -393,11 +473,23 @@ class DocumentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Share document error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Share document error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to share document',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to share document',
         error: ApiError(
-          message: e.response?.data['error']?['message'] ?? e.message ?? 'Failed to share document',
+          message:
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to share document',
           code: e.response?.statusCode?.toString(),
         ),
       );

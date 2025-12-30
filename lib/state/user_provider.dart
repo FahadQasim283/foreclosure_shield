@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../data/models/user_models.dart';
 import '../data/models/user.dart';
 import '../repo/user_repository.dart';
+import '../core/utils/error_handler.dart';
 
 enum UserState { idle, loading, success, error }
 
@@ -39,7 +40,7 @@ class UserProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch user profile');
       _setState(UserState.error);
       return false;
     }
@@ -63,7 +64,7 @@ class UserProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to update user profile');
       _setState(UserState.error);
       return false;
     }
@@ -97,7 +98,7 @@ class UserProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to upload profile image');
       _uploadProgress = 0.0;
       _setState(UserState.error);
       return false;

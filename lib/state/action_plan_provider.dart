@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../data/models/action_plan_models.dart';
 import '../data/models/action_task.dart';
 import '../repo/action_plan_repository.dart';
+import '../core/utils/error_handler.dart';
 
 enum ActionPlanState { idle, loading, success, error }
 
@@ -51,7 +52,7 @@ class ActionPlanProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch action plan');
       _setState(ActionPlanState.error);
       return false;
     }
@@ -75,7 +76,7 @@ class ActionPlanProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch task');
       _setState(ActionPlanState.error);
       return false;
     }
@@ -174,7 +175,7 @@ class ActionPlanProvider extends ChangeNotifier {
         _taskCompletionStates.remove(taskId);
       }
 
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to update task');
       await getActionPlan(); // Refresh to get correct state
       return false;
     }
@@ -200,7 +201,7 @@ class ActionPlanProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to update notes');
       return false;
     }
   }

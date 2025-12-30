@@ -45,12 +45,23 @@ class NotificationRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get notifications error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get notifications error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch notifications',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch notifications',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch notifications',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch notifications',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -88,12 +99,23 @@ class NotificationRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get unread count error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get unread count error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch unread count',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch unread count',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch unread count',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch unread count',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -133,12 +155,21 @@ class NotificationRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Mark as read error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Mark as read error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to mark notification as read',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to mark notification as read',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ??
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
               e.message ??
               'Failed to mark notification as read',
           code: e.response?.statusCode?.toString(),
@@ -180,12 +211,23 @@ class NotificationRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Mark all as read error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Mark all as read error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to mark all as read',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to mark all as read',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to mark all as read',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to mark all as read',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -225,12 +267,23 @@ class NotificationRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Delete notification error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Delete notification error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to delete notification',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to delete notification',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to delete notification',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to delete notification',
           code: e.response?.statusCode?.toString(),
         ),
       );

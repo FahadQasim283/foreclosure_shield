@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../data/models/support_models.dart';
 import '../repo/support_repository.dart';
+import '../core/utils/error_handler.dart';
 
 enum SupportState { idle, loading, success, error }
 
@@ -51,7 +52,7 @@ class SupportProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch FAQ');
       _setState(SupportState.error);
       return false;
     }
@@ -77,7 +78,7 @@ class SupportProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to create support ticket');
       _setState(SupportState.error);
       return null;
     }
@@ -109,7 +110,7 @@ class SupportProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch support tickets');
       _setState(SupportState.error);
       return false;
     }
@@ -140,7 +141,7 @@ class SupportProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch ticket details');
       _setState(SupportState.error);
       return false;
     }
@@ -183,7 +184,7 @@ class SupportProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to add message to ticket');
       return false;
     }
   }
@@ -205,7 +206,7 @@ class SupportProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to send contact message');
       _setState(SupportState.error);
       return null;
     }

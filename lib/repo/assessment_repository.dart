@@ -40,12 +40,23 @@ class AssessmentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Create assessment error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Create assessment error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Assessment creation failed',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Assessment creation failed',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Assessment creation failed',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Assessment creation failed',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -86,12 +97,23 @@ class AssessmentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get assessment error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get assessment error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch assessment',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch assessment',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch assessment',
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
+              e.message ??
+              'Failed to fetch assessment',
           code: e.response?.statusCode?.toString(),
         ),
       );
@@ -136,12 +158,21 @@ class AssessmentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get assessment history error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get assessment history error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch assessment history',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch assessment history',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ??
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
               e.message ??
               'Failed to fetch assessment history',
           code: e.response?.statusCode?.toString(),
@@ -181,12 +212,21 @@ class AssessmentRepository {
         ),
       );
     } on DioException catch (e) {
-      debugPrint('Get latest assessment error: $e');
+      final errorMsg =
+          e.response?.data?['message'] ??
+          e.response?.data?['error']?['message'] ??
+          e.message ??
+          'Unknown error';
+      debugPrint('Get latest assessment error: $errorMsg');
       return ApiResponse.failure(
-        e.response?.data['error']?['message'] ?? e.message ?? 'Failed to fetch latest assessment',
+        e.response?.data?['message'] ??
+            e.response?.data?['error']?['message'] ??
+            e.message ??
+            'Failed to fetch latest assessment',
         error: ApiError(
           message:
-              e.response?.data['error']?['message'] ??
+              e.response?.data?['message'] ??
+              e.response?.data?['error']?['message'] ??
               e.message ??
               'Failed to fetch latest assessment',
           code: e.response?.statusCode?.toString(),

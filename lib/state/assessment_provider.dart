@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../data/models/assessment_models.dart';
 import '../data/models/risk_assessment.dart';
 import '../repo/assessment_repository.dart';
+import '../core/utils/error_handler.dart';
 
 enum AssessmentState { idle, loading, success, error }
 
@@ -43,7 +44,7 @@ class AssessmentProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to create assessment');
       _setState(AssessmentState.error);
       return null;
     }
@@ -67,7 +68,7 @@ class AssessmentProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch assessment');
       _setState(AssessmentState.error);
       return false;
     }
@@ -95,7 +96,7 @@ class AssessmentProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch history');
       _setState(AssessmentState.error);
       return false;
     }
@@ -120,7 +121,7 @@ class AssessmentProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getErrorMessage(e, 'No assessments found');
       _setState(AssessmentState.error);
       return false;
     }
