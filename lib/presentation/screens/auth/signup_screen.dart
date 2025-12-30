@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
 import '../../../core/theme/theme.dart';
+import '../../../state/auth_provider.dart';
+import '../../../data/models/auth_models.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -44,13 +47,33 @@ class _SignupScreenState extends State<SignupScreen> {
 
     setState(() => _isLoading = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    final authProvider = context.read<AuthProvider>();
+    final success = await authProvider.signup(
+      SignupRequest(
+        username: _emailController.text.split('@')[0], // Use email prefix as username
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        firstName: _nameController.text.trim().split(' ').first,
+        lastName: _nameController.text.trim().split(' ').skip(1).join(' '),
+      ),
+    );
 
     if (mounted) {
       setState(() => _isLoading = false);
-      // Navigate to verify OTP screen
-      context.push(RouteNames.verifyOtp);
+
+      if (success) {
+        // Navigate to OTP verification screen
+        final email = _emailController.text.trim();
+        print('Navigating to OTP screen with email: $email');
+        context.push('${RouteNames.verifyOtp}?email=${Uri.encodeComponent(email)}');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage ?? 'Signup failed'),
+            backgroundColor: AppColors.red,
+          ),
+        );
+      }
     }
   }
 

@@ -1,0 +1,315 @@
+// ===============================
+// DASHBOARD SUMMARY MODEL
+// ===============================
+class DashboardSummary {
+  final RiskSummary riskSummary;
+  final TasksSummary tasksSummary;
+  final DocumentsSummary documentsSummary;
+  final SubscriptionInfo subscriptionInfo;
+  final List<RecentActivity> recentActivities;
+  final List<RecentDocument> recentDocuments;
+  final NextTask? nextTask;
+
+  DashboardSummary({
+    required this.riskSummary,
+    required this.tasksSummary,
+    required this.documentsSummary,
+    required this.subscriptionInfo,
+    required this.recentActivities,
+    required this.recentDocuments,
+    this.nextTask,
+  });
+
+  factory DashboardSummary.fromJson(Map<String, dynamic> json) {
+    return DashboardSummary(
+      riskSummary: RiskSummary.fromJson(json['riskAssessment']),
+      tasksSummary: TasksSummary.fromJson(json['actionPlan']),
+      documentsSummary: DocumentsSummary.fromJson(json['documents']),
+      subscriptionInfo: json['user']['subscription'] != null
+          ? SubscriptionInfo.fromJson(json['user']['subscription'])
+          : SubscriptionInfo(planName: 'Free', status: 'inactive', daysRemaining: 0),
+      recentActivities: json['notifications'] != null && json['notifications']['recent'] != null
+          ? (json['notifications']['recent'] as List)
+                .map((e) => RecentActivity.fromJson(e as Map<String, dynamic>))
+                .toList()
+          : [],
+      recentDocuments: json['documents'] != null && json['documents']['recent'] != null
+          ? (json['documents']['recent'] as List)
+                .map((e) => RecentDocument.fromJson(e as Map<String, dynamic>))
+                .toList()
+          : [],
+      nextTask: json['actionPlan'] != null && json['actionPlan']['nextTask'] != null
+          ? NextTask.fromJson(json['actionPlan']['nextTask'])
+          : null,
+    );
+  }
+}
+
+// ===============================
+// RISK SUMMARY MODEL
+// ===============================
+class RiskSummary {
+  final String currentRiskLevel;
+  final double riskScore;
+  final int totalAssessments;
+  final DateTime? lastAssessmentDate;
+
+  RiskSummary({
+    required this.currentRiskLevel,
+    required this.riskScore,
+    required this.totalAssessments,
+    this.lastAssessmentDate,
+  });
+
+  factory RiskSummary.fromJson(Map<String, dynamic> json) {
+    return RiskSummary(
+      currentRiskLevel: json['level'] as String,
+      riskScore: double.parse(json['score'].toString()),
+      totalAssessments: json['hasAssessment'] == true ? 1 : 0,
+      lastAssessmentDate: json['lastUpdated'] != null
+          ? DateTime.parse(json['lastUpdated'] as String)
+          : null,
+    );
+  }
+}
+
+// ===============================
+// TASKS SUMMARY MODEL
+// ===============================
+class TasksSummary {
+  final int totalTasks;
+  final int completedTasks;
+  final int pendingTasks;
+  final int highPriorityTasks;
+  final double completionPercentage;
+
+  TasksSummary({
+    required this.totalTasks,
+    required this.completedTasks,
+    required this.pendingTasks,
+    required this.highPriorityTasks,
+    required this.completionPercentage,
+  });
+
+  factory TasksSummary.fromJson(Map<String, dynamic> json) {
+    final totalTasks = int.parse(json['totalTasks'].toString());
+    final completedTasks = int.parse(json['completedTasks'].toString());
+    return TasksSummary(
+      totalTasks: totalTasks,
+      completedTasks: completedTasks,
+      pendingTasks: totalTasks - completedTasks,
+      highPriorityTasks: 0, // Not provided in API
+      completionPercentage: double.parse(json['progress'].toString()),
+    );
+  }
+}
+
+// ===============================
+// DOCUMENTS SUMMARY MODEL
+// ===============================
+class DocumentsSummary {
+  final int totalDocuments;
+  final int generatedLetters;
+  final int uploadedDocuments;
+  final DateTime? lastUploadDate;
+
+  DocumentsSummary({
+    required this.totalDocuments,
+    required this.generatedLetters,
+    required this.uploadedDocuments,
+    this.lastUploadDate,
+  });
+
+  factory DocumentsSummary.fromJson(Map<String, dynamic> json) {
+    final totalCount = int.parse(json['totalCount'].toString());
+    return DocumentsSummary(
+      totalDocuments: totalCount,
+      generatedLetters: 0, // Not provided
+      uploadedDocuments: totalCount,
+      lastUploadDate: null, // Not provided
+    );
+  }
+}
+
+// ===============================
+// SUBSCRIPTION INFO MODEL
+// ===============================
+class SubscriptionInfo {
+  final String planName;
+  final String status;
+  final DateTime? expiryDate;
+  final int daysRemaining;
+
+  SubscriptionInfo({
+    required this.planName,
+    required this.status,
+    this.expiryDate,
+    required this.daysRemaining,
+  });
+
+  factory SubscriptionInfo.fromJson(Map<String, dynamic> json) {
+    return SubscriptionInfo(
+      planName: json['planName'] as String,
+      status: json['status'] as String,
+      expiryDate: json['expiryDate'] != null ? DateTime.parse(json['expiryDate'] as String) : null,
+      daysRemaining: int.parse(json['daysRemaining'].toString()),
+    );
+  }
+}
+
+// ===============================
+// RECENT ACTIVITY MODEL
+// ===============================
+class RecentActivity {
+  final String id;
+  final String type;
+  final String title;
+  final String description;
+  final DateTime timestamp;
+  final String? icon;
+
+  RecentActivity({
+    required this.id,
+    required this.type,
+    required this.title,
+    required this.description,
+    required this.timestamp,
+    this.icon,
+  });
+
+  factory RecentActivity.fromJson(Map<String, dynamic> json) {
+    return RecentActivity(
+      id: json['id'] as String,
+      type: json['type'] as String,
+      title: json['title'] as String,
+      description: json['description'] ?? '', // Default to empty if not provided
+      timestamp: DateTime.parse(json['createdAt'] as String),
+      icon: json['icon'] as String?,
+    );
+  }
+}
+
+// ===============================
+// RECENT DOCUMENT MODEL
+// ===============================
+class RecentDocument {
+  final String id;
+  final String title;
+  final String type;
+  final DateTime createdAt;
+
+  RecentDocument({
+    required this.id,
+    required this.title,
+    required this.type,
+    required this.createdAt,
+  });
+
+  factory RecentDocument.fromJson(Map<String, dynamic> json) {
+    return RecentDocument(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      type: json['type'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+    );
+  }
+}
+
+// ===============================
+// NEXT TASK MODEL
+// ===============================
+class NextTask {
+  final String? id;
+  final String title;
+  final String priority;
+  final DateTime dueDate;
+
+  NextTask({this.id, required this.title, required this.priority, required this.dueDate});
+
+  factory NextTask.fromJson(Map<String, dynamic> json) {
+    return NextTask(
+      id: json['id'] as String?,
+      title: json['title'] as String,
+      priority: json['priority'] as String,
+      dueDate: DateTime.parse(json['dueDate'] as String),
+    );
+  }
+}
+
+// ===============================
+// DASHBOARD STATISTICS MODEL
+// ===============================
+class DashboardStatistics {
+  final Map<String, int> assessmentsByMonth;
+  final Map<String, int> tasksByCategory;
+  final Map<String, int> documentsByType;
+  final List<MonthlyProgress> monthlyProgress;
+
+  DashboardStatistics({
+    required this.assessmentsByMonth,
+    required this.tasksByCategory,
+    required this.documentsByType,
+    required this.monthlyProgress,
+  });
+
+  factory DashboardStatistics.fromJson(Map<String, dynamic> json) {
+    return DashboardStatistics(
+      assessmentsByMonth: Map<String, int>.from(json['assessmentsByMonth'] as Map),
+      tasksByCategory: Map<String, int>.from(json['tasksByCategory'] as Map),
+      documentsByType: Map<String, int>.from(json['documentsByType'] as Map),
+      monthlyProgress: (json['monthlyProgress'] as List)
+          .map((e) => MonthlyProgress.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+}
+
+// ===============================
+// MONTHLY PROGRESS MODEL
+// ===============================
+class MonthlyProgress {
+  final String month;
+  final int assessments;
+  final int completedTasks;
+  final int documents;
+
+  MonthlyProgress({
+    required this.month,
+    required this.assessments,
+    required this.completedTasks,
+    required this.documents,
+  });
+
+  factory MonthlyProgress.fromJson(Map<String, dynamic> json) {
+    return MonthlyProgress(
+      month: json['month'] as String,
+      assessments: int.parse(json['assessments'].toString()),
+      completedTasks: int.parse(json['completedTasks'].toString()),
+      documents: int.parse(json['documents'].toString()),
+    );
+  }
+}
+
+// ===============================
+// RESPONSE MODELS
+// ===============================
+
+class DashboardSummaryResponse {
+  final DashboardSummary dashboard;
+
+  DashboardSummaryResponse({required this.dashboard});
+
+  factory DashboardSummaryResponse.fromJson(Map<String, dynamic> json) {
+    return DashboardSummaryResponse(dashboard: DashboardSummary.fromJson(json));
+  }
+}
+
+class DashboardStatisticsResponse {
+  final DashboardStatistics statistics;
+
+  DashboardStatisticsResponse({required this.statistics});
+
+  factory DashboardStatisticsResponse.fromJson(Map<String, dynamic> json) {
+    return DashboardStatisticsResponse(statistics: DashboardStatistics.fromJson(json));
+  }
+}

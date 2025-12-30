@@ -42,7 +42,13 @@ class RouteGenerator {
         path: RouteNames.forgotPassword,
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
-      GoRoute(path: RouteNames.verifyOtp, builder: (context, state) => const VerifyOtpScreen()),
+      GoRoute(
+        path: RouteNames.verifyOtp,
+        builder: (context, state) {
+          final email = state.uri.queryParameters['email'];
+          return VerifyOtpScreen(email: email);
+        },
+      ),
 
       // Main App
       GoRoute(path: RouteNames.main, builder: (context, state) => const MainScreen()),
