@@ -41,10 +41,6 @@ class ApiClient {
     if (response.statusCode == 401) {
       await TokenStorage.clearAll();
     }
-    if (response.data['success']) {
-      // NotificationWidgets.showSuccessSnackBar(response.data['message']);
-    } else {}
-
     handler.next(response);
   }
 

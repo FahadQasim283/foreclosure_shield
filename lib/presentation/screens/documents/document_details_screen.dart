@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '/core/theme/app_colors.dart';
 import '/core/theme/app_typography.dart';
 import '/state/document_provider.dart';
@@ -17,39 +17,52 @@ class DocumentDetailsScreen extends StatelessWidget {
     return Consumer<DocumentProvider>(
       builder: (context, documentProvider, child) {
         // Find document by ID from provider
-        final document = documentProvider.documents.firstWhere(
-          (doc) => doc.id == documentId,
-          orElse: () => documentProvider.currentDocument!,
-        );
+        final document = documentProvider.documents.isNotEmpty
+            ? documentProvider.documents.firstWhere(
+                (doc) => doc.id == documentId,
+                orElse: () => documentProvider.currentDocument!,
+              )
+            : documentProvider.currentDocument;
+
+        // Show error if document not found
+        if (document == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Document Details')),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 64, color: AppColors.neutral400),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Document not found',
+                    style: AppTypography.h3.copyWith(color: AppColors.neutral600),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'The document you\'re looking for doesn\'t exist.',
+                    style: AppTypography.bodyMedium.copyWith(color: AppColors.neutral500),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(onPressed: () => context.pop(), child: const Text('Go Back')),
+                ],
+              ),
+            ),
+          );
+        }
 
         return Scaffold(
           appBar: AppBar(
             title: const Text('Document Details'),
             actions: [
               IconButton(
-                icon: const Icon(Icons.download),
+                icon: const Icon(Icons.share),
                 onPressed: () {
-                  _downloadDocument(context, document);
+                  _shareDocument(context, document);
                 },
               ),
               PopupMenuButton(
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [Icon(Icons.edit, size: 20), SizedBox(width: 12), Text('Edit')],
-                    ),
-                  ),
-                  const PopupMenuItem(
-                    value: 'duplicate',
-                    child: Row(
-                      children: [
-                        Icon(Icons.copy, size: 20),
-                        SizedBox(width: 12),
-                        Text('Duplicate'),
-                      ],
-                    ),
-                  ),
                   const PopupMenuItem(
                     value: 'delete',
                     child: Row(
@@ -151,98 +164,88 @@ class DocumentDetailsScreen extends StatelessWidget {
                         _buildInfoRow('File Location', document.fileUrl!),
                       if (document.generatedContent != null) ...[
                         const SizedBox(height: 20),
-                        Text('Generated Content', style: AppTypography.h3),
-                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Letter Preview', style: AppTypography.h3),
+                            if (document.letterType != null)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.secondary.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: AppColors.secondary.withOpacity(0.3)),
+                                ),
+                                child: Text(
+                                  _formatLetterType(document.letterType!),
+                                  style: AppTypography.bodySmall.copyWith(
+                                    color: AppColors.secondary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: AppColors.neutral100,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: AppColors.neutral300),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
-                          child: Text(document.generatedContent!, style: AppTypography.bodyMedium),
+                          child: MarkdownBody(
+                            data: document.generatedContent!,
+                            styleSheet: MarkdownStyleSheet(
+                              h1: AppTypography.h2.copyWith(
+                                color: AppColors.neutral900,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              h2: AppTypography.h3.copyWith(
+                                color: AppColors.neutral800,
+                                fontWeight: FontWeight.w600,
+                                height: 2.0,
+                              ),
+                              h3: AppTypography.h4.copyWith(
+                                color: AppColors.neutral700,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              p: AppTypography.bodyMedium.copyWith(
+                                color: AppColors.neutral800,
+                                height: 1.6,
+                              ),
+                              listBullet: AppTypography.bodyMedium.copyWith(
+                                color: AppColors.primary,
+                              ),
+                              strong: AppTypography.bodyMedium.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.neutral900,
+                              ),
+                              blockSpacing: 16.0,
+                              listIndent: 24.0,
+                            ),
+                          ),
                         ),
                       ],
                       const SizedBox(height: 24),
 
-                      // Preview Section
-                      Text('Document Preview', style: AppTypography.h3),
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        height: 400,
-                        decoration: BoxDecoration(
-                          color: AppColors.neutral100,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.neutral300),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                _getFileIcon(document.fileType ?? 'pdf'),
-                                size: 80,
-                                color: AppColors.neutral400,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                '${(document.fileType ?? 'PDF').toUpperCase()} Preview',
-                                style: AppTypography.h4.copyWith(color: AppColors.neutral600),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Tap to view full document',
-                                style: AppTypography.bodySmall.copyWith(
-                                  color: AppColors.neutral500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
                       // Action Buttons
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                _showFullContentDialog(context, document);
-                              },
-                              icon: const Icon(Icons.visibility),
-                              label: const Text('View Full'),
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: () {
-                                _shareDocument(context, document);
-                              },
-                              icon: const Icon(Icons.share),
-                              label: const Text('Share'),
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
                       SizedBox(
                         width: double.infinity,
-                        child: OutlinedButton.icon(
+                        child: ElevatedButton.icon(
                           onPressed: () {
-                            // Edit document
+                            _shareDocument(context, document);
                           },
-                          icon: const Icon(Icons.edit),
-                          label: const Text('Edit Document'),
-                          style: OutlinedButton.styleFrom(
+                          icon: const Icon(Icons.share),
+                          label: const Text('Share Letter'),
+                          style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                         ),
@@ -325,82 +328,26 @@ class DocumentDetailsScreen extends StatelessWidget {
     return '${date.month}/${date.day}/${date.year}';
   }
 
-  void _showFullContentDialog(BuildContext context, document) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(document.title),
-        content: SingleChildScrollView(
-          child: Text(
-            document.generatedContent ?? 'No content available',
-            style: AppTypography.bodyMedium,
-          ),
-        ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
-      ),
-    );
+  String _formatLetterType(String letterType) {
+    return letterType.split('_').map((word) => word[0].toUpperCase() + word.substring(1)).join(' ');
   }
 
   void _shareDocument(BuildContext context, document) async {
     String shareText = 'Document: ${document.title}\nType: ${document.documentType}';
 
-    if (document.generatedContent != null && document.generatedContent!.isNotEmpty) {
-      shareText += '\n\nContent:\n${document.generatedContent}';
+    if (document.letterType != null) {
+      shareText += '\nLetter Type: ${_formatLetterType(document.letterType!)}';
     }
 
-    if (document.fileUrl != null && document.fileUrl!.isNotEmpty) {
-      shareText += '\n\nDownload Link: ${document.fileUrl}';
+    if (document.generatedContent != null && document.generatedContent!.isNotEmpty) {
+      shareText += '\n\n${document.generatedContent}';
     }
 
     try {
-      await Share.share(shareText, subject: 'Shared Document: ${document.title}');
+      await Share.share(shareText, subject: document.title);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error sharing document: $e'), duration: const Duration(seconds: 2)),
-      );
-    }
-  }
-
-  void _downloadDocument(BuildContext context, document) async {
-    if (document.fileUrl != null && document.fileUrl!.isNotEmpty) {
-      final Uri url = Uri.parse(document.fileUrl!);
-      try {
-        if (await canLaunchUrl(url)) {
-          await launchUrl(url, mode: LaunchMode.externalApplication);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Opening document...'), duration: Duration(seconds: 2)),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Could not open document URL'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error opening document: $e'),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    } else if (document.generatedContent != null && document.generatedContent!.isNotEmpty) {
-      // For generated content without a file URL, share the content
-      _shareDocument(context, document);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Document shared. Use share options to save or send.'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No downloadable content available'),
-          duration: Duration(seconds: 2),
-        ),
       );
     }
   }

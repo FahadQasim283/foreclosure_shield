@@ -32,11 +32,29 @@ class AuthProvider extends ChangeNotifier {
     try {
       final token = await TokenStorage.getAccessToken();
       if (token != null && token.isNotEmpty) {
-        // Token exists, assume authenticated
-        // Could optionally verify token or fetch user profile here
         _accessToken = token;
         _refreshToken = await TokenStorage.getRefreshToken();
-        _setState(AuthState.authenticated);
+
+        // Fetch user profile to complete authentication
+        try {
+          final response = await _authRepository.getCurrentUser();
+          if (response.success && response.data != null) {
+            _currentUser = response.data;
+            _setState(AuthState.authenticated);
+          } else {
+            // Token exists but unable to fetch user, clear tokens
+            await TokenStorage.clearTokens();
+            _accessToken = null;
+            _refreshToken = null;
+            _setState(AuthState.unauthenticated);
+          }
+        } catch (e) {
+          // Error fetching user, clear tokens
+          await TokenStorage.clearTokens();
+          _accessToken = null;
+          _refreshToken = null;
+          _setState(AuthState.unauthenticated);
+        }
       } else {
         _setState(AuthState.unauthenticated);
       }
