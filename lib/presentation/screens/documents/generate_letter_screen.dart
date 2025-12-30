@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/theme.dart';
+import '../../../core/routes/route_names.dart';
 import '../../../state/document_provider.dart';
 import '../../../data/models/document_models.dart';
 
@@ -86,7 +87,7 @@ class _GenerateLetterScreenState extends State<GenerateLetterScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                   // Navigate to document details
-                  context.go('/documents/${document.id}');
+                  context.go('${RouteNames.documentDetails}/${document.id}');
                 },
                 child: const Text('View Letter'),
               ),
