@@ -50,11 +50,11 @@ class _SignupScreenState extends State<SignupScreen> {
     final authProvider = context.read<AuthProvider>();
     final success = await authProvider.signup(
       SignupRequest(
-        username: _emailController.text.split('@')[0], // Use email prefix as username
+        name: _nameController.text.trim(),
         email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
         password: _passwordController.text,
-        firstName: _nameController.text.trim().split(' ').first,
-        lastName: _nameController.text.trim().split(' ').skip(1).join(' '),
+        confirmPassword: _confirmPasswordController.text,
       ),
     );
 
