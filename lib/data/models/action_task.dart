@@ -25,18 +25,32 @@ class ActionTask {
 
   factory ActionTask.fromJson(Map<String, dynamic> json) {
     return ActionTask(
-      id: json['id'] as String,
-      assessmentId: json['assessment_id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      category: json['category'] as String,
-      priority: json['priority'] as String,
-      dueDate: json['due_date'] != null ? DateTime.parse(json['due_date'] as String) : null,
-      isCompleted: json['is_completed'] as bool? ?? false,
-      completedDate: json['completed_date'] != null
+      id: json['id']?.toString() ?? '',
+      assessmentId: json['assessmentId']?.toString() ?? json['assessment_id']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      category: json['category']?.toString() ?? 'important',
+      priority: json['priority']?.toString() ?? 'medium',
+      dueDate: json['dueDate'] != null
+          ? DateTime.parse(json['dueDate'] as String)
+          : json['due_date'] != null
+          ? DateTime.parse(json['due_date'] as String)
+          : null,
+      isCompleted:
+          json['isCompleted'] == true ||
+          json['isCompleted'] == 'true' ||
+          json['is_completed'] == true ||
+          json['is_completed'] == 'true',
+      completedDate: json['completedDate'] != null
+          ? DateTime.parse(json['completedDate'] as String)
+          : json['completed_date'] != null
           ? DateTime.parse(json['completed_date'] as String)
           : null,
-      sortOrder: json['sort_order'] as int,
+      sortOrder: json['sortOrder'] != null
+          ? int.parse(json['sortOrder'].toString())
+          : json['sort_order'] != null
+          ? int.parse(json['sort_order'].toString())
+          : 0,
     );
   }
 

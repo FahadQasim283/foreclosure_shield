@@ -1,83 +1,140 @@
 class User {
-  final String id;
+  final String? id;
+  final String? username;
   final String email;
-  final String name;
+  final String? firstName;
+  final String? lastName;
   final String? phone;
-  final String role; // 'client' or 'admin'
-  final DateTime createdAt;
-  final bool isEmailVerified;
-  final bool isPhoneVerified;
-  final String? subscriptionPlan; // 'basic', 'pro', 'premium'
+  final String? profileImage;
+  final String? propertyAddress;
+  final String? city;
+  final String? state;
+  final String? zipCode;
+  final String subscriptionType; // 'FREE', 'BASIC', 'PREMIUM'
   final DateTime? subscriptionExpiryDate;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   User({
-    required this.id,
+    this.id,
+    this.username,
     required this.email,
-    required this.name,
+    this.firstName,
+    this.lastName,
     this.phone,
-    required this.role,
-    required this.createdAt,
-    this.isEmailVerified = false,
-    this.isPhoneVerified = false,
-    this.subscriptionPlan,
+    this.profileImage,
+    this.propertyAddress,
+    this.city,
+    this.state,
+    this.zipCode,
+    this.subscriptionType = 'FREE',
     this.subscriptionExpiryDate,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
+  // Computed property for full name
+  String get name => '${firstName ?? ''} ${lastName ?? ''}'.trim();
+  String get displayName => name.isNotEmpty ? name : username ?? email;
+
   factory User.fromJson(Map<String, dynamic> json) {
+    // Handle 'name' field from API - split into first and last name
+    String? firstName;
+    String? lastName;
+
+    if (json['name'] != null && json['name'].toString().isNotEmpty) {
+      final nameParts = json['name'].toString().trim().split(' ');
+      firstName = nameParts.first;
+      if (nameParts.length > 1) {
+        lastName = nameParts.sublist(1).join(' ');
+      }
+    } else {
+      firstName = json['first_name'] as String? ?? json['firstName'] as String?;
+      lastName = json['last_name'] as String? ?? json['lastName'] as String?;
+    }
+
     return User(
-      id: json['id'] as String,
+      id: json['id']?.toString(),
+      username: json['username'] as String?,
       email: json['email'] as String,
-      name: json['name'] as String,
-      phone: json['phone'] as String?,
-      role: json['role'] as String,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      isEmailVerified: json['is_email_verified'] as bool? ?? false,
-      isPhoneVerified: json['is_phone_verified'] as bool? ?? false,
-      subscriptionPlan: json['subscription_plan'] as String?,
-      subscriptionExpiryDate: json['subscription_expiry_date'] != null
-          ? DateTime.parse(json['subscription_expiry_date'] as String)
+      firstName: firstName,
+      lastName: lastName,
+      phone: json['phone']?.toString(),
+      profileImage: json['profile_image'] as String? ?? json['profileImage'] as String?,
+      propertyAddress: json['propertyAddress'] as String?,
+      city: json['city'] as String?,
+      state: json['state'] as String?,
+      zipCode: json['zipCode'] as String?,
+      subscriptionType: json['subscriptionType'] as String? ?? 'FREE',
+      subscriptionExpiryDate: json['subscriptionExpiryDate'] != null
+          ? DateTime.parse(json['subscriptionExpiryDate'] as String)
           : null,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : DateTime.now(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'username': username,
       'email': email,
-      'name': name,
+      'first_name': firstName,
+      'last_name': lastName,
       'phone': phone,
-      'role': role,
-      'created_at': createdAt.toIso8601String(),
-      'is_email_verified': isEmailVerified,
-      'is_phone_verified': isPhoneVerified,
-      'subscription_plan': subscriptionPlan,
-      'subscription_expiry_date': subscriptionExpiryDate?.toIso8601String(),
+      'profile_image': profileImage,
+      'propertyAddress': propertyAddress,
+      'city': city,
+      'state': state,
+      'zipCode': zipCode,
+      'subscriptionType': subscriptionType,
+      'subscriptionExpiryDate': subscriptionExpiryDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
   User copyWith({
     String? id,
+    String? username,
     String? email,
-    String? name,
+    String? firstName,
+    String? lastName,
     String? phone,
-    String? role,
-    DateTime? createdAt,
-    bool? isEmailVerified,
-    bool? isPhoneVerified,
-    String? subscriptionPlan,
+    String? profileImage,
+    String? propertyAddress,
+    String? city,
+    String? state,
+    String? zipCode,
+    String? subscriptionType,
     DateTime? subscriptionExpiryDate,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return User(
       id: id ?? this.id,
+      username: username ?? this.username,
       email: email ?? this.email,
-      name: name ?? this.name,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
       phone: phone ?? this.phone,
-      role: role ?? this.role,
-      createdAt: createdAt ?? this.createdAt,
-      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
-      isPhoneVerified: isPhoneVerified ?? this.isPhoneVerified,
-      subscriptionPlan: subscriptionPlan ?? this.subscriptionPlan,
+      profileImage: profileImage ?? this.profileImage,
+      propertyAddress: propertyAddress ?? this.propertyAddress,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      zipCode: zipCode ?? this.zipCode,
+      subscriptionType: subscriptionType ?? this.subscriptionType,
       subscriptionExpiryDate: subscriptionExpiryDate ?? this.subscriptionExpiryDate,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

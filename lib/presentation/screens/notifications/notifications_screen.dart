@@ -1,58 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/theme/theme.dart';
-import '../../../data/mock_data.dart';
+import '../../../state/notification_provider.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final notifications = MockData.mockNotifications;
-    final unreadNotifications = notifications.where((n) => !n.isRead).toList();
-    final readNotifications = notifications.where((n) => n.isRead).toList();
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications'),
-        actions: [
-          if (unreadNotifications.isNotEmpty)
-            TextButton(
-              onPressed: () {
-                // Mark all as read
-              },
-              child: Text(
-                'Mark all read',
-                style: AppTypography.bodySmall.copyWith(color: AppColors.white),
-              ),
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadNotifications();
+    });
+  }
+
+  Future<void> _loadNotifications() async {
+    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+    await notificationProvider.getNotifications();
+  }
+
+  Future<void> _markAllAsRead() async {
+    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+    await notificationProvider.markAllAsRead();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<NotificationProvider>(
+      builder: (context, notificationProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Notifications'),
+            actions: [
+              if (notificationProvider.hasUnread)
+                TextButton(
+                  onPressed: notificationProvider.isLoading ? null : _markAllAsRead,
+                  child: Text(
+                    'Mark all read',
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.white),
+                  ),
+                ),
+            ],
+          ),
+          body: _buildBody(notificationProvider),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(NotificationProvider provider) {
+    if (provider.isLoading && !provider.hasNotifications) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (provider.hasError) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: AppColors.red),
+            const SizedBox(height: 16),
+            Text(
+              provider.errorMessage ?? 'Failed to load notifications',
+              style: AppTypography.bodyLarge,
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 24),
+            ElevatedButton(onPressed: _loadNotifications, child: const Text('Retry')),
+          ],
+        ),
+      );
+    }
+
+    if (!provider.hasNotifications) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.notifications_none, size: 80, color: AppColors.neutral300),
+            const SizedBox(height: 16),
+            Text('No notifications', style: AppTypography.h4.copyWith(color: AppColors.neutral500)),
+          ],
+        ),
+      );
+    }
+
+    final unreadNotifications = provider.unreadNotifications;
+    final readNotifications = provider.readNotifications;
+
+    return RefreshIndicator(
+      onRefresh: _loadNotifications,
+      child: ListView(
+        children: [
+          if (unreadNotifications.isNotEmpty) ...[
+            _buildSectionHeader('New'),
+            ...unreadNotifications.map((notif) => _buildNotificationItem(notif, context, provider)),
+          ],
+          if (readNotifications.isNotEmpty) ...[
+            _buildSectionHeader('Earlier'),
+            ...readNotifications.map((notif) => _buildNotificationItem(notif, context, provider)),
+          ],
         ],
       ),
-      body: notifications.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.notifications_none, size: 80, color: AppColors.neutral300),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No notifications',
-                    style: AppTypography.h4.copyWith(color: AppColors.neutral500),
-                  ),
-                ],
-              ),
-            )
-          : ListView(
-              children: [
-                if (unreadNotifications.isNotEmpty) ...[
-                  _buildSectionHeader('New'),
-                  ...unreadNotifications.map((notif) => _buildNotificationItem(notif, context)),
-                ],
-                if (readNotifications.isNotEmpty) ...[
-                  _buildSectionHeader('Earlier'),
-                  ...readNotifications.map((notif) => _buildNotificationItem(notif, context)),
-                ],
-              ],
-            ),
     );
   }
 
@@ -63,7 +117,11 @@ class NotificationsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationItem(dynamic notification, BuildContext context) {
+  Widget _buildNotificationItem(
+    dynamic notification,
+    BuildContext context,
+    NotificationProvider provider,
+  ) {
     final color = _getNotificationColor(notification.type);
     final icon = _getNotificationIcon(notification.type);
 
@@ -106,8 +164,11 @@ class NotificationsScreen extends StatelessWidget {
                 decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               )
             : null,
-        onTap: () {
-          // Mark as read and navigate to related content
+        onTap: () async {
+          if (!notification.isRead) {
+            await provider.markAsRead(notification.id);
+          }
+          // Navigate to related content if needed
         },
       ),
     );

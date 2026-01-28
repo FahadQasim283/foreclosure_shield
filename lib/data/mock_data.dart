@@ -4,15 +4,20 @@ class MockData {
   // Mock User
   static final User mockUser = User(
     id: '1',
+    username: 'fahadqasim',
     email: 'fahadqasim3310@gmail.com',
-    name: 'Fahad Qasim',
+    firstName: 'Fahad',
+    lastName: 'Qasim',
     phone: '+923021826959',
-    role: 'client',
-    createdAt: DateTime.now().subtract(const Duration(days: 30)),
-    isEmailVerified: true,
-    isPhoneVerified: true,
-    subscriptionPlan: 'pro',
+    profileImage: null,
+    propertyAddress: '1234 Main Street',
+    city: 'Springfield',
+    state: 'IL',
+    zipCode: '62701',
+    subscriptionType: 'PREMIUM',
     subscriptionExpiryDate: DateTime.now().add(const Duration(days: 335)),
+    createdAt: DateTime.now().subtract(const Duration(days: 30)),
+    updatedAt: DateTime.now(),
   );
 
   // Mock Risk Assessment
