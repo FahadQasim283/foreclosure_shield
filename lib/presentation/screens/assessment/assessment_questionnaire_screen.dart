@@ -5,7 +5,6 @@ import '/core/theme/app_colors.dart';
 import '/core/theme/app_typography.dart';
 import '/core/routes/route_names.dart';
 import '/state/assessment_provider.dart';
-import '/state/dashboard_provider.dart';
 import '/data/models/assessment_models.dart';
 
 class AssessmentQuestionnaireScreen extends StatefulWidget {
@@ -55,10 +54,6 @@ class _AssessmentQuestionnaireScreenState extends State<AssessmentQuestionnaireS
 
     if (mounted) {
       if (assessment != null) {
-        // Refresh dashboard to update risk scores and assessment data
-        final dashboardProvider = context.read<DashboardProvider>();
-        dashboardProvider.refreshDashboard();
-
         context.push(RouteNames.assessmentResult);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

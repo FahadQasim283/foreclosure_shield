@@ -57,15 +57,11 @@ class ActionPlanResponse {
 
   factory ActionPlanResponse.fromJson(Map<String, dynamic> json) {
     return ActionPlanResponse(
-      actionPlanId: json['id']?.toString() ?? json['actionPlanId']?.toString() ?? '',
-      tasks: json['tasks'] != null
-          ? (json['tasks'] as List)
-                .map((e) => ActionTask.fromJson(e as Map<String, dynamic>))
-                .toList()
-          : [],
-      progress: json['progress'] != null
-          ? ActionPlanProgress.fromJson(json['progress'])
-          : ActionPlanProgress(totalTasks: 0, completedTasks: 0, percentage: 0.0),
+      actionPlanId: json['id'] ?? '',
+      tasks: (json['tasks'] as List)
+          .map((e) => ActionTask.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      progress: ActionPlanProgress.fromJson(json['progress']),
     );
   }
 }

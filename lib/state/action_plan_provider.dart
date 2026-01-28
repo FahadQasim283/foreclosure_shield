@@ -42,26 +42,17 @@ class ActionPlanProvider extends ChangeNotifier {
     try {
       final response = await _actionPlanRepository.getActionPlan();
 
-      debugPrint('Action Plan Response - Success: ${response.success}');
-      debugPrint('Action Plan Response - Data: ${response.data}');
-      debugPrint('Action Plan Response - Error: ${response.error?.message}');
-
       if (response.success && response.data != null) {
         _actionPlan = response.data;
-        debugPrint('Action Plan loaded with ${_actionPlan?.tasks.length ?? 0} tasks');
         _setState(ActionPlanState.success);
         return true;
       } else {
-        _errorMessage =
-            response.error?.message ?? response.message ?? 'Failed to fetch action plan';
-        debugPrint('Action Plan Error: $_errorMessage');
+        _errorMessage = response.error?.message ?? 'Failed to fetch action plan';
         _setState(ActionPlanState.error);
         return false;
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       _errorMessage = ErrorHandler.getErrorMessage(e, 'Failed to fetch action plan');
-      debugPrint('Action Plan Exception: $e');
-      debugPrint('Stack trace: $stackTrace');
       _setState(ActionPlanState.error);
       return false;
     }

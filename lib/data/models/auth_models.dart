@@ -5,27 +5,27 @@ import '/data/models/user.dart';
 // ===============================
 
 class SignupRequest {
-  final String name;
+  final String username;
   final String email;
-  final String phone;
   final String password;
-  final String confirmPassword;
+  final String? firstName;
+  final String? lastName;
 
   SignupRequest({
-    required this.name,
+    required this.username,
     required this.email,
-    required this.phone,
     required this.password,
-    required this.confirmPassword,
+    this.firstName,
+    this.lastName,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
+      'username': username,
       'email': email,
-      'phone': phone,
       'password': password,
-      'confirmPassword': confirmPassword,
+      if (firstName != null) 'first_name': firstName,
+      if (lastName != null) 'last_name': lastName,
     };
   }
 }
