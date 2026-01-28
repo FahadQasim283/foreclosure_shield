@@ -38,12 +38,27 @@ class User {
   String get displayName => name.isNotEmpty ? name : username ?? email;
 
   factory User.fromJson(Map<String, dynamic> json) {
+    // Handle 'name' field from API - split into first and last name
+    String? firstName;
+    String? lastName;
+
+    if (json['name'] != null && json['name'].toString().isNotEmpty) {
+      final nameParts = json['name'].toString().trim().split(' ');
+      firstName = nameParts.first;
+      if (nameParts.length > 1) {
+        lastName = nameParts.sublist(1).join(' ');
+      }
+    } else {
+      firstName = json['first_name'] as String? ?? json['firstName'] as String?;
+      lastName = json['last_name'] as String? ?? json['lastName'] as String?;
+    }
+
     return User(
       id: json['id']?.toString(),
       username: json['username'] as String?,
       email: json['email'] as String,
-      firstName: json['first_name'] as String? ?? json['firstName'] as String?,
-      lastName: json['last_name'] as String? ?? json['lastName'] as String?,
+      firstName: firstName,
+      lastName: lastName,
       phone: json['phone']?.toString(),
       profileImage: json['profile_image'] as String? ?? json['profileImage'] as String?,
       propertyAddress: json['propertyAddress'] as String?,
@@ -56,9 +71,13 @@ class User {
           : null,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
+          : json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
           : DateTime.now(),
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'] as String)
+          : json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
           : DateTime.now(),
     );
   }

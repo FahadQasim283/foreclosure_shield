@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/routes/route_names.dart';
 import '../../../state/document_provider.dart';
+import '../../../state/dashboard_provider.dart';
 import '../../../data/models/document_models.dart';
 
 class GenerateLetterScreen extends StatefulWidget {
@@ -67,6 +68,10 @@ class _GenerateLetterScreenState extends State<GenerateLetterScreen> {
 
     if (mounted) {
       if (document != null) {
+        // Refresh dashboard to update document counts
+        final dashboardProvider = context.read<DashboardProvider>();
+        dashboardProvider.refreshDashboard();
+
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
