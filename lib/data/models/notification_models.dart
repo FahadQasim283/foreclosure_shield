@@ -41,20 +41,12 @@ class NotificationModel {
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
-      id: json['id']?.toString() ?? '',
-      title: json['title']?.toString() ?? '',
-      message: json['message']?.toString() ?? '',
-      type: json['type']?.toString() ?? 'info',
-      isRead:
-          json['isRead'] == true ||
-          json['isRead'] == 'true' ||
-          json['is_read'] == true ||
-          json['is_read'] == 'true',
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
-          : json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
-          : DateTime.now(),
+      id: json['id'] ?? '',
+      title: json['title'] as String,
+      message: json['message'] as String,
+      type: json['type'] as String,
+      isRead: json['isRead'] == 'true',
+      createdAt: DateTime.parse(json['createdAt'] as String),
       data: json['data'] as Map<String, dynamic>?,
     );
   }
@@ -166,7 +158,7 @@ class NotificationsListResponse {
           .map((e) => NotificationModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       pagination: Pagination.fromJson(json['pagination']),
-      unreadCount: json['unreadCount'] != null ? int.parse(json['unreadCount'].toString()) : 0,
+      unreadCount: json['unreadCount'] as int,
     );
   }
 }
@@ -187,12 +179,6 @@ class UnreadCountResponse {
   UnreadCountResponse({required this.count});
 
   factory UnreadCountResponse.fromJson(Map<String, dynamic> json) {
-    return UnreadCountResponse(
-      count: json['unreadCount'] != null
-          ? int.parse(json['unreadCount'].toString())
-          : json['count'] != null
-          ? int.parse(json['count'].toString())
-          : 0,
-    );
+    return UnreadCountResponse(count: json['count'] as int);
   }
 }

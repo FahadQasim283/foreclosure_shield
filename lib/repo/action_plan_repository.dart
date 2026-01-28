@@ -29,11 +29,6 @@ class ActionPlanRepository {
 
       final response = await _apiClient.get(url);
 
-      debugPrint('Action Plan API Response:');
-      debugPrint('Success: ${response.data['success']}');
-      debugPrint('Data: ${response.data['data']}');
-      debugPrint('Message: ${response.data['message']}');
-
       if (response.data['success'] == true) {
         final actionPlanResponse = ActionPlanResponse.fromJson(response.data['data']);
         return ApiResponse.success(

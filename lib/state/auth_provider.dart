@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../data/models/auth_models.dart';
 import '../data/models/user.dart';
 import '../repo/auth_repository.dart';
-import '../services/local_storage/token_storage.dart';
+import '../services/token_storage.dart';
 import '../core/utils/error_handler.dart';
 
 enum AuthState { idle, loading, authenticated, unauthenticated, error }
@@ -43,14 +43,14 @@ class AuthProvider extends ChangeNotifier {
             _setState(AuthState.authenticated);
           } else {
             // Token exists but unable to fetch user, clear tokens
-            await TokenStorage.clearAll();
+            await TokenStorage.clearTokens();
             _accessToken = null;
             _refreshToken = null;
             _setState(AuthState.unauthenticated);
           }
         } catch (e) {
           // Error fetching user, clear tokens
-          await TokenStorage.clearAll();
+          await TokenStorage.clearTokens();
           _accessToken = null;
           _refreshToken = null;
           _setState(AuthState.unauthenticated);

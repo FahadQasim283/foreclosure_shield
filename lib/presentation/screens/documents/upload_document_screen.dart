@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import '/core/theme/app_colors.dart';
 import '/core/theme/app_typography.dart';
 import '/state/document_provider.dart';
-import '/state/dashboard_provider.dart';
 
 class UploadDocumentScreen extends StatefulWidget {
   const UploadDocumentScreen({super.key});
@@ -95,10 +94,6 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
 
     if (mounted) {
       if (document != null) {
-        // Refresh dashboard to update document counts
-        final dashboardProvider = context.read<DashboardProvider>();
-        dashboardProvider.refreshDashboard();
-
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Document uploaded successfully')));
